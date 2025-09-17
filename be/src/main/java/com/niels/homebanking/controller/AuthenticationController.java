@@ -70,7 +70,7 @@ public class AuthenticationController {
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(new AuthenticationResponseDto("INVALID_CREDENTIALS"), HttpStatus.UNAUTHORIZED);
         }
-        final UserAccount userAccount = (UserAccount) userAccountService.loadUser(authenticationRequest.getUsername());
+        final UserAccount userAccount = (UserAccount) userAccountService.loadUserByUsername(authenticationRequest.getUsername());
         String accessToken = jwtToken.generateAccessToken(userAccount);
         String refreshToken = jwtToken.generateRefreshToken(userAccount);
         return new ResponseEntity<>(new AuthenticationResponseDto(accessToken, refreshToken, userAccount.getFullName()), HttpStatus.OK);
@@ -187,7 +187,7 @@ public class AuthenticationController {
     public ResponseEntity<RefreshResponseDto> refreshToken(
             @RequestBody RefreshRequestDto refreshRequestDto
     ) throws Exception {
-        final UserAccount userAccount = (UserAccount) userAccountService.loadUser(jwtToken.getUsernameFromToken(refreshRequestDto.getRefreshToken()));
+        final UserAccount userAccount = (UserAccount) userAccountService.loadUserByUsername(jwtToken.getUsernameFromToken(refreshRequestDto.getRefreshToken()));
         final String accessToken = jwtToken.generateAccessToken(userAccount);
         return new ResponseEntity<>(new RefreshResponseDto(accessToken), HttpStatus.OK);
     }

@@ -21,7 +21,6 @@ public class AppConfig {
 
     @Value("${app.jwt.secret}")
     private String SECRET_KEY;
-
     @Value("${app.symmetric.salt}")
     private String SALT;
     @Value("${app.symmetric.secret}")

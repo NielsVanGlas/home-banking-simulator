@@ -20,13 +20,13 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address getOrCreateAddress(CreateAddressDto dto) {
         Optional<Address> optionalAddress = addressRepository.findIfExist(dto.getAddress(), dto.getCity(), dto.getZipCode(), dto.getProvinceCode(), dto.getCountryCode());
-        return optionalAddress.orElseGet(() -> AddressFactory.createAddress(dto));
+        return optionalAddress.orElseGet(() -> AddressFactory.createAddress(dto, addressRepository));
     }
 
     @Override
     public Address getOrUpdateAddress(UpdateAddressDto dto) {
         Optional<Address> optionalAddress = addressRepository.findIfExist(dto.getAddress(), dto.getCity(), dto.getZipCode(), dto.getProvinceCode(), dto.getCountryCode());
-        return optionalAddress.orElseGet(() -> AddressFactory.updateAddress(dto));
+        return optionalAddress.orElseGet(() -> AddressFactory.updateAddress(dto, addressRepository));
     }
 
 }

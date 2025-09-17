@@ -4,10 +4,12 @@ import com.niels.homebanking.entity.extra.CommonEntity;
 import com.niels.homebanking.util.Encryptor;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
 public class Address extends CommonEntity {
 
     @Column

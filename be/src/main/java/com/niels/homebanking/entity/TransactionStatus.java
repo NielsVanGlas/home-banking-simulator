@@ -2,10 +2,12 @@ package com.niels.homebanking.entity;
 
 import com.niels.homebanking.entity.extra.CommonEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
 public class TransactionStatus extends CommonEntity {
 
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package com.niels.homebanking.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.niels.homebanking.entity.extra.CommonEntity;
 import com.niels.homebanking.enumerate.DocumentType;
 import com.niels.homebanking.enumerate.Gender;
@@ -8,9 +9,9 @@ import com.niels.homebanking.enumerate.converter.DocumentTypeConverter;
 import com.niels.homebanking.enumerate.converter.GenderConverter;
 import com.niels.homebanking.enumerate.converter.RoleConverter;
 import com.niels.homebanking.util.Encryptor;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,7 @@ public class UserAccount extends CommonEntity implements UserDetails {
     private boolean enabled;
 
     @Column
+    @Convert(converter = Encryptor.class)
     private String password;
 
     @Column
@@ -76,11 +78,17 @@ public class UserAccount extends CommonEntity implements UserDetails {
     private String mobile;
 
     // Residence
-    @Column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "residence_id", nullable = false)
+    @JsonBackReference
     private Address residence;
 
     // Domicile
-    @Column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "home_id", nullable = false)
+    @JsonBackReference
     private Address home;
 
     // Terms and Conditions

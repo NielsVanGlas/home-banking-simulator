@@ -2,11 +2,13 @@ package com.niels.homebanking.entity;
 
 import com.niels.homebanking.entity.extra.CommonEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
 public class ErrorTracking extends CommonEntity {
 
     @Column

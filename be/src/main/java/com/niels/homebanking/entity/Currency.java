@@ -2,10 +2,12 @@ package com.niels.homebanking.entity;
 
 import com.niels.homebanking.entity.extra.CommonEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
 public class Currency extends CommonEntity {
 
     @Column(nullable = false)
@@ -18,20 +20,20 @@ public class Currency extends CommonEntity {
     private String symbol;
 
     @Column(nullable = false)
-    private int exchange;
+    private long exchange;
 
     //
     public Currency() {
     }
 
-    public Currency(String name, String iso, String symbol, int exchange) {
+    public Currency(String name, String iso, String symbol, long exchange) {
         this.name = name;
         this.iso = iso;
         this.symbol = symbol;
         this.exchange = exchange;
     }
 
-    public Currency(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, String name, String iso, String symbol, int exchange) {
+    public Currency(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, String name, String iso, String symbol, long exchange) {
         super(id, createdAt, updatedAt);
         this.name = name;
         this.iso = iso;
@@ -64,11 +66,11 @@ public class Currency extends CommonEntity {
         this.symbol = symbol;
     }
 
-    public int getExchange() {
+    public long getExchange() {
         return exchange;
     }
 
-    public void setExchange(int exchange) {
+    public void setExchange(long exchange) {
         this.exchange = exchange;
     }
 

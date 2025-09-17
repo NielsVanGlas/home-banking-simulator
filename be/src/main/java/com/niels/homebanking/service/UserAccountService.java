@@ -9,11 +9,12 @@ import com.niels.homebanking.entity.UserAccount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserAccountService {
+public interface UserAccountService extends UserDetailsService {
 
     UUID createUserAccount(CreateUserAccountDto createUserAccountDto) throws ValidationException;
 
@@ -30,8 +31,6 @@ public interface UserAccountService {
     void updatePassword(UUID id, UUID authenticatedUser, String password) throws BaseException;
 
     Optional<UserAccount> findById(UUID id);
-
-    UserDetails loadUser(String authenticatedUser);
 
     void enableAccount(UserAccount userAccount);
 }

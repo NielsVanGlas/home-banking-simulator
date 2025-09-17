@@ -24,9 +24,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDate;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class RequestFilter extends OncePerRequestFilter {
@@ -39,8 +37,34 @@ public class RequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtParser jwtParser;
 
+    // Define routes to skip JWT validation
+    private static final List<String> SKIP_JWT_PATHS = Arrays.asList(
+            "/auth/**",
+            "/bank/**",
+            "/swagger-ui/**",
+            "/transaction/**",
+            "/user",        // For GET and POST /user
+            "/currency/**"  // For GET /currency/**
+    );
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        // Skip JWT validation for specified paths and methods
+        return SKIP_JWT_PATHS.stream().anyMatch(pattern ->
+                path.matches(pattern.replace("/**", ".*")) ||
+                        (pattern.equals("/currency/**") && method.equals("GET")) ||
+                        (pattern.equals("/user") && (method.equals("GET") || method.equals("POST")))
+        );
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+        logger.info("Processing request: {} {}", request.getMethod(), request.getRequestURI());
+
         String requestTokenHeader = request.getHeader("Authorization");
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             String jwtToken = requestTokenHeader.substring(7);
@@ -50,20 +74,23 @@ public class RequestFilter extends OncePerRequestFilter {
                 UUID userAccountId = UUID.fromString(subject);
                 String userId = userAccountId.toString();
                 if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userAccountService.loadUser(userId);
+                    UserDetails userDetails = userAccountService.loadUserByUsername(userId);
                     if (validateToken(jwtToken, userDetails, userAccountId)) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     }
                 }
-                chain.doFilter(request, response);
             } catch (IllegalArgumentException e) {
-                logger.warn("Unable to get JWT Token");
+                logger.warn("Unable to get JWT Token: {}", e.getMessage());
             } catch (ExpiredJwtException e) {
-                logger.warn("JWT Token has expired");
+                logger.warn("JWT Token has expired: {}", e.getMessage());
             }
         }
+
+        // Always proceed to the next filter
+        chain.doFilter(request, response);
+        logger.info("Finished processing request: {} {}", request.getMethod(), request.getRequestURI());
     }
 
     private Boolean validateToken(String token, UserDetails userDetails, UUID userAccountId) throws ExpiredJwtException {

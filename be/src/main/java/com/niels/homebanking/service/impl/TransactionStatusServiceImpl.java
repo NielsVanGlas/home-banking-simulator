@@ -30,7 +30,7 @@ public class TransactionStatusServiceImpl implements TransactionStatusService {
     @Override
     public UUID createTransactionStatus(CreateTransactionStatusDto createTransactionStatusDto) throws ValidationException {
 
-        if (transactionStatusRepository.existByStatus(createTransactionStatusDto.getStatus())) {
+        if (transactionStatusRepository.findByStatus(createTransactionStatusDto.getStatus()).isEmpty()) {
             throw new ValidationException(ERR_0004, HttpStatus.BAD_REQUEST);
         }
         TransactionStatus transactionStatus = transactionStatusRepository.saveAndFlush(TransactionStatusFactory.createTransactionStatus(createTransactionStatusDto));
@@ -49,12 +49,12 @@ public class TransactionStatusServiceImpl implements TransactionStatusService {
 
     @Override
     public Page<ShowTransactionStatusDto> getTransactionStatuss(Pageable pagination) {
-        return transactionStatusRepository.findAllTransactionStatuses();
+        return transactionStatusRepository.findAllTransactionStatuses(pagination);
     }
 
     @Override
     public void updateTransactionStatus(UUID id, UpdateTransactionStatusDto updateTransactionStatusDto) throws ValidationException, BaseException {
-        if (transactionStatusRepository.existByStatus(updateTransactionStatusDto.getStatus())) {
+        if (transactionStatusRepository.findByStatus(updateTransactionStatusDto.getStatus()).isEmpty()) {
             throw new ValidationException(ERR_0004, HttpStatus.BAD_REQUEST);
         }
         TransactionStatus transactionStatus = transactionStatusRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));

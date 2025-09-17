@@ -1,39 +1,30 @@
-spring.datasource.url: jdbc:postgresql://${DB_ADDRESS}:5432/homebanking?autoReconnect=true&useSSL=false
-spring.datasource.username: ${DB_USER}
-spring.datasource.password: ${DB_PASSWORD}
-spring.datasource.driverClassName: org.postgresql.Driver
-
 app:
   jwt:
     access: 31536000000
     refresh: 86400000
     otp: 300000
-    secret:
+    secret: secret
   symmetric:
-    secret:
-    salt:
+    secret: secret
+    salt: salt
 
 spring:
   jpa:
     generate-ddl: false
     open-in-view: false
     show-sql: false
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    properties:
-      hibernate:
-        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-        format_sql: true
-        ddl-auto: update
+    hibernate:
+      ddl-auto: update
   datasource:
     master:
-      jdbcUrl: jdbc:postgresql://${DB_ADDRESS}:5432/homebanking-master-dev?autoReconnect=true&useSSL=false
-      username: ${DB_USER}
-      password: ${DB_PASSWORD}
+      jdbcUrl: ${SPRING_DATASOURCE_MASTER_URL}
+      username: ${SPRING_DATASOURCE_USERNAME}
+      password: ${SPRING_DATASOURCE_PASSWORD}
       driverClassName-class-name: org.postgresql.Driver
     slave:
-      jdbcUrl: jdbc:postgresql://${DB_ADDRESS_SLAVE}:5432/homebanking-slave-dev?autoReconnect=true&useSSL=false
-      username: ${DB_USER}
-      password: ${DB_PASSWORD}
+      jdbcUrl: ${SPRING_DATASOURCE_SLAVE_URL}
+      username: ${SPRING_DATASOURCE_USERNAME}
+      password: ${SPRING_DATASOURCE_PASSWORD}
       driverClassName-class-name: org.postgresql.Driver
   devtools:
     add-properties: false

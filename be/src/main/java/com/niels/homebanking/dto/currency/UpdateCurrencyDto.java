@@ -8,12 +8,12 @@ public class UpdateCurrencyDto {
 
     private String symbol;
 
-    private int exchange;
+    private long exchange;
 
     public UpdateCurrencyDto() {
     }
 
-    public UpdateCurrencyDto(String name, String iso, String symbol, int exchange) {
+    public UpdateCurrencyDto(String name, String iso, String symbol, long exchange) {
         this.name = name;
         this.iso = iso;
         this.symbol = symbol;
@@ -44,11 +44,11 @@ public class UpdateCurrencyDto {
         this.symbol = symbol;
     }
 
-    public int getExchange() {
+    public long getExchange() {
         return exchange;
     }
 
-    public void setExchange(int exchange) {
+    public void setExchange(long exchange) {
         this.exchange = exchange;
     }
 }

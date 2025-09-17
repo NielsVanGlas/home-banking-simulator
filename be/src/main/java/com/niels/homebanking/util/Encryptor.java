@@ -1,9 +1,7 @@
 package com.niels.homebanking.util;
 
-import com.niels.homebanking.entity.ErrorTracking;
-import com.niels.homebanking.repository.ErrorTrackingRepository;
 import jakarta.persistence.AttributeConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -21,13 +19,10 @@ import java.util.Base64;
 @Component
 public class Encryptor implements AttributeConverter<String, String> {
 
-    @Autowired
-    private ErrorTrackingRepository errorTrackingRepository;
-
     private static SecretKey key;
     private static Cipher cipher;
 
-    public Encryptor(String secretParam, String saltParam) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
+    public Encryptor(@Value("${app.symmetric.secret}") String secretParam, @Value("${app.symmetric.salt}") String saltParam) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
         key = getKeyFromPassword(secretParam, saltParam);
         cipher = Cipher.getInstance("AES/CTR/NoPadding");
     }
@@ -48,7 +43,6 @@ public class Encryptor implements AttributeConverter<String, String> {
             byte[] cipherText = cipher.doFinal(input.getBytes());
             return Base64.getEncoder().encodeToString(cipherText);
         } catch (Exception ex) {
-            errorTrackingRepository.saveAndFlush(new ErrorTracking(ex.getMessage()));
             return null;
         }
     }
@@ -59,7 +53,6 @@ public class Encryptor implements AttributeConverter<String, String> {
             byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(input));
             return new String(plainText);
         } catch (Exception ex) {
-            errorTrackingRepository.saveAndFlush(new ErrorTracking(ex.getMessage()));
             return null;
         }
     }

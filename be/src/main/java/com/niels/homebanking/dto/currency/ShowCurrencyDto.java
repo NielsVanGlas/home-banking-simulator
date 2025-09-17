@@ -12,12 +12,12 @@ public class ShowCurrencyDto {
 
     private String symbol;
 
-    private int exchange;
+    private long exchange;
 
     public ShowCurrencyDto() {
     }
 
-    public ShowCurrencyDto(UUID id, String name, String iso, String symbol, int exchange) {
+    public ShowCurrencyDto(UUID id, String name, String iso, String symbol, long exchange) {
         this.id = id;
         this.name = name;
         this.iso = iso;
@@ -57,11 +57,11 @@ public class ShowCurrencyDto {
         this.symbol = symbol;
     }
 
-    public int getExchange() {
+    public long getExchange() {
         return exchange;
     }
 
-    public void setExchange(int exchange) {
+    public void setExchange(long exchange) {
         this.exchange = exchange;
     }
 }
