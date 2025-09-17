@@ -1,0 +1,22 @@
+package com.niels.homebanking.repository;
+
+import com.niels.homebanking.dto.currency.ShowCurrencyDto;
+import com.niels.homebanking.entity.Currency;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface CurrencyRepository extends JpaRepository<Currency, UUID> {
+
+    @Query(value = "SELECT new com.niels.homebanking.dto.currency.ShowCurrencyDto(c.id, c.name, c.iso, c.symbol, c.exchange) FROM Currency c")
+    Page<ShowCurrencyDto> findCurrencies(Pageable pageable);
+
+    @Query(value = "SELECT c FROM Currency c WHERE c.iso = ?1")
+    Optional<Object> findByIso(String iso);
+}
