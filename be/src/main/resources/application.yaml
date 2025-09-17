@@ -1,0 +1,18 @@
+spring:
+    application:
+        name: home-banking
+    devtools:
+        restart:
+            log-condition-evaluation-delta: false
+
+spring.web.locale: it
+server.port: 8080
+
+spring.main.banner-mode: off
+spring.servlet.multipart.max-file-size: 4096KB
+spring.servlet.multipart.max-request-size: 4096KB
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    supported-submit-methods: [ "get", "put", "post", "delete", "options", "head", "patch", "trace" ]
