@@ -13,6 +13,10 @@ spring.servlet.multipart.max-file-size: 4096KB
 spring.servlet.multipart.max-request-size: 4096KB
 
 springdoc:
+  api-docs:
+    path: /v3/api-docs
   swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
     use-root-path: true
     supported-submit-methods: [ "get", "put", "post", "delete", "options", "head", "patch", "trace" ]

@@ -5,6 +5,7 @@ import com.niels.homebanking.service.UserAccountService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.security.SignatureException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -40,11 +42,10 @@ public class RequestFilter extends OncePerRequestFilter {
     // Define routes to skip JWT validation
     private static final List<String> SKIP_JWT_PATHS = Arrays.asList(
             "/auth/**",
-            "/bank/**",
+            "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/transaction/**",
-            "/user",        // For GET and POST /user
-            "/currency/**"  // For GET /currency/**
+            "/swagger-ui.html",
+            "/user"
     );
 
     @Override
@@ -55,8 +56,7 @@ public class RequestFilter extends OncePerRequestFilter {
         // Skip JWT validation for specified paths and methods
         return SKIP_JWT_PATHS.stream().anyMatch(pattern ->
                 path.matches(pattern.replace("/**", ".*")) ||
-                        (pattern.equals("/currency/**") && method.equals("GET")) ||
-                        (pattern.equals("/user") && (method.equals("GET") || method.equals("POST")))
+                        (pattern.equals("/user") && method.equals("POST"))
         );
     }
 
@@ -66,47 +66,70 @@ public class RequestFilter extends OncePerRequestFilter {
         logger.info("Processing request: {} {}", request.getMethod(), request.getRequestURI());
 
         String requestTokenHeader = request.getHeader("Authorization");
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            String jwtToken = requestTokenHeader.substring(7);
-            try {
-                Claims claims = jwtParser.parseClaimsJws(jwtToken).getBody();
-                String subject = claims.getSubject();
-                UUID userAccountId = UUID.fromString(subject);
-                String userId = userAccountId.toString();
-                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userAccountService.loadUserByUsername(userId);
-                    if (validateToken(jwtToken, userDetails, userAccountId)) {
-                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                logger.warn("Unable to get JWT Token: {}", e.getMessage());
-            } catch (ExpiredJwtException e) {
-                logger.warn("JWT Token has expired: {}", e.getMessage());
-            }
+        if (requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer ")) {
+            logger.warn("Missing or invalid Authorization header");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
+            return;
         }
 
-        // Always proceed to the next filter
+        String jwtToken = requestTokenHeader.substring(7);
+        try {
+            Claims claims = jwtParser.parseClaimsJws(jwtToken).getBody();
+            String subject = claims.getSubject();
+            logger.info("JWT Claims subject: {}", subject);
+            UUID userAccountId = UUID.fromString(subject);
+            String userId = userAccountId.toString();
+
+            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userAccountService.loadUserByUsername(userId);
+                logger.info("UserDetails loaded: {}", userDetails.getUsername());
+                if (validateToken(jwtToken, userDetails, userAccountId)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    logger.info("Authentication set for user: {}", userId);
+                } else {
+                    logger.warn("Token validation failed for user: {}", userId);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                    return;
+                }
+            }
+        } catch (MalformedJwtException e) {
+            logger.warn("Malformed JWT token: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Malformed JWT token");
+            return;
+        } catch (ExpiredJwtException e) {
+            logger.warn("JWT Token has expired: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token expired");
+            return;
+        } catch (Exception e) {
+            logger.warn("JWT parsing error: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT parsing error");
+            return;
+        }
+
         chain.doFilter(request, response);
         logger.info("Finished processing request: {} {}", request.getMethod(), request.getRequestURI());
     }
 
-    private Boolean validateToken(String token, UserDetails userDetails, UUID userAccountId) throws ExpiredJwtException {
+    private Boolean validateToken(String token, UserDetails userDetails, UUID userAccountId) {
         Optional<UserAccount> optionalUserAccount = userAccountService.findById(userAccountId);
         if (optionalUserAccount.isPresent()) {
             String username = optionalUserAccount.get().getUsername();
+            logger.info("Validating token - UserDetails username: {}, UserAccount username: {}",
+                    userDetails.getUsername(), username);
             return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
         }
+        logger.warn("UserAccount not found for ID: {}", userAccountId);
         return false;
     }
 
     private Boolean isTokenExpired(String token) {
         Claims claims = jwtParser.parseClaimsJws(token).getBody();
-        Date subject = claims.getExpiration();
-        LocalDate expiration = subject.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return expiration.isBefore(ChronoLocalDate.from(ZonedDateTime.now()));
+        Date expiration = claims.getExpiration();
+        logger.info("Token expiration: {}", expiration);
+        return expiration.before(new Date());
     }
 
 }

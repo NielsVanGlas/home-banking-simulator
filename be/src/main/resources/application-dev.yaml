@@ -3,29 +3,26 @@ app:
     access: 31536000000
     refresh: 86400000
     otp: 300000
-    secret: secret
+    secret: q12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNB
   symmetric:
-    secret: secret
-    salt: salt
+    secret: oiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837
+    salt: 1234567890qwerty'13'poiuyt0987654321
 
 spring:
   jpa:
     generate-ddl: false
     open-in-view: false
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: public
+        format_sql: true
   datasource:
-    master:
-      jdbcUrl: ${SPRING_DATASOURCE_MASTER_URL}
-      username: ${SPRING_DATASOURCE_USERNAME}
-      password: ${SPRING_DATASOURCE_PASSWORD}
-      driverClassName-class-name: org.postgresql.Driver
-    slave:
-      jdbcUrl: ${SPRING_DATASOURCE_SLAVE_URL}
-      username: ${SPRING_DATASOURCE_USERNAME}
-      password: ${SPRING_DATASOURCE_PASSWORD}
-      driverClassName-class-name: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://localhost:5432/homebanking-master?autoReconnect=true&useSSL=false #${SPRING_DATASOURCE_MASTER_URL}
+    username: postgres #${SPRING_DATASOURCE_USERNAME}
+    password: u7ZgMGBvWLsG9JKhxw #${SPRING_DATASOURCE_PASSWORD}
   devtools:
     add-properties: false
 
@@ -35,3 +32,9 @@ logging:
       springframework:
         core:
           env=DEBUG:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

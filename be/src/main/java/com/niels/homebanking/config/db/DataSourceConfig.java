@@ -22,23 +22,16 @@ import javax.sql.DataSource;
 @EntityScan
 public class DataSourceConfig {
 
-    @Bean(name = "master")
-    @ConfigurationProperties(prefix = "spring.datasource.master")
-    public DataSource readWriteConfiguration() {
-        return DataSourceBuilder.create().build();
-    }
-
-    @Bean(name = "slave")
-    @ConfigurationProperties(prefix = "spring.datasource.slave")
-    public DataSource readOnlyConfiguration() {
+    @Bean(name = "datasource")
+    @Primary
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource masterDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    @Primary
-    public DataSource routingDataSource() {
-        return new TransactionRoutingDataSource(loggingProxy("read_write", readWriteConfiguration()),
-                loggingProxy("read_only", readOnlyConfiguration()));
+    public DataSource dataSource() {
+        return loggingProxy("datasource", masterDataSource());
     }
 
     private DataSource loggingProxy(String name, DataSource dataSource) {
@@ -51,17 +44,12 @@ public class DataSourceConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder) {
-        return builder.dataSource(routingDataSource()).packages("com.niels.homebanking").build();
+        return builder.dataSource(dataSource()).packages("com.niels.homebanking").build();
     }
 
     @Bean
     @Primary
-    public PlatformTransactionManager transactionManager(@Qualifier("jpaTransactionManager") PlatformTransactionManager wrapped) {
-        return new ReplicaAwareTransactionManager(wrapped);
-    }
-
-    @Bean(name = "jpaTransactionManager")
-    public PlatformTransactionManager jpaTransactionManager(EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
 

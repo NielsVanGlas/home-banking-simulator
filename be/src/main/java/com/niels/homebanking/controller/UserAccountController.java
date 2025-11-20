@@ -120,10 +120,13 @@ public class UserAccountController {
     })
     @GetMapping(value = "/all")
     public ResponseEntity<PageShowUserAccountDto> showRecords(
-            @RequestParam(defaultValue = "1") @Size(min = 1, message = "page must start from 1") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "name,desc") String[] sort
     ) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
         Page<ShowUserAccountDto> pages = userAccountService.getUserAccounts(Common.getPagination(page, size, sort));
         List<ShowUserAccountDto> response = pages.getContent();
         return response.isEmpty() ?

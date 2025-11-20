@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,6 +37,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UUID createUserAccount(CreateUserAccountDto createUserAccountDto) throws ValidationException {
 
@@ -53,7 +57,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 ? addressService.getOrCreateAddress(createUserAccountDto.getHome())
                 : residence;
 
-        UserAccount userAccount = userAccountRepository.saveAndFlush(UserAccountFactory.createUserAccount(createUserAccountDto, residence, home));
+        UserAccount userAccount = userAccountRepository.saveAndFlush(UserAccountFactory.createUserAccount(createUserAccountDto, residence, home, passwordEncoder));
         return userAccount.getId();
 
     }
@@ -89,7 +93,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         Address home = updateUserAccountDto.getHome() != null
                 ? addressService.getOrUpdateAddress(updateUserAccountDto.getHome())
                 : residence;
-        userAccountRepository.saveAndFlush(UserAccountFactory.updateUserAccount(optionalUserAccount.get(), updateUserAccountDto, residence, home));
+        userAccountRepository.saveAndFlush(UserAccountFactory.updateUserAccount(optionalUserAccount.get(), updateUserAccountDto, residence, home, passwordEncoder));
     }
 
     @Override
@@ -117,7 +121,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     public void updatePassword(UUID id, UUID authenticatedUser, String password) throws BaseException {
         if (id.equals(authenticatedUser)) {
             UserAccount userAccount = userAccountRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
-            userAccount.setPassword(password);
+            userAccount.setPassword(passwordEncoder.encode(password));
             userAccountRepository.saveAndFlush(userAccount);
         } else {
             throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
@@ -132,8 +136,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserDetails loadUserByUsername (String name) throws UsernameNotFoundException {
         Optional<UserAccount> optionalUserAccount = UUID_REGEX.matcher(name).matches()
-                ? userAccountRepository.findByEmail(name)
-                : userAccountRepository.findById(UUID.fromString(name));
+                ? userAccountRepository.findById(UUID.fromString(name))
+                : userAccountRepository.findByEmail(name);
         return optionalUserAccount.orElseThrow(() -> new UsernameNotFoundException(name + ": User not found"));
     }
 

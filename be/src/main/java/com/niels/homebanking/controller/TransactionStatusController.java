@@ -115,10 +115,13 @@ public class TransactionStatusController {
     })
     @GetMapping(value = "")
     public ResponseEntity<PageShowTransactionStatusDto> showRecords(
-            @RequestParam(defaultValue = "1") @Size(min = 1, message = "page must start from 1") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "name,desc") String[] sort
     ) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
         Page<ShowTransactionStatusDto> pages = bankAccountService.getTransactionStatuss(Common.getPagination(page, size, sort));
         List<ShowTransactionStatusDto> response = pages.getContent();
         return response.isEmpty() ?

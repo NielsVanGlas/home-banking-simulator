@@ -5,14 +5,15 @@ import com.niels.homebanking.dto.userAccount.ShowUserAccountDto;
 import com.niels.homebanking.dto.userAccount.UpdateUserAccountDto;
 import com.niels.homebanking.entity.Address;
 import com.niels.homebanking.entity.UserAccount;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserAccountFactory {
 
-    public static UserAccount createUserAccount(CreateUserAccountDto dto, Address residence, Address home) {
+    public static UserAccount createUserAccount(CreateUserAccountDto dto, Address residence, Address home, PasswordEncoder passwordEncoder) {
 
         return new UserAccount(
                 dto.isEnabled(),
-                dto.getPassword(),
+                passwordEncoder.encode(dto.getPassword()),
                 dto.getRole(),
                 dto.getFirstName(),
                 dto.getLastName(),
@@ -39,7 +40,6 @@ public class UserAccountFactory {
         return new ShowUserAccountDto(
                 entity.getId(),
                 entity.isEnabled(),
-                entity.getPassword(),
                 entity.getRole(),
                 entity.getFirstName(),
                 entity.getLastName(),
@@ -61,9 +61,9 @@ public class UserAccountFactory {
 
     }
 
-    public static UserAccount updateUserAccount(UserAccount entity, UpdateUserAccountDto dto, Address residence, Address home) {
+    public static UserAccount updateUserAccount(UserAccount entity, UpdateUserAccountDto dto, Address residence, Address home, PasswordEncoder passwordEncoder) {
         entity.setEnabled(dto.isEnabled());
-        entity.setPassword(dto.getPassword());
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.setRole(dto.getRole());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
@@ -75,8 +75,8 @@ public class UserAccountFactory {
         entity.setTaxCode(dto.getTaxCode());
         entity.setEmail(dto.getEmail());
         entity.setMobile(dto.getMobile());
-        AddressFactory.showAddressDto(entity.getResidence());
-        AddressFactory.showAddressDto(entity.getHome());
+        AddressFactory.showAddressDto(residence);
+        AddressFactory.showAddressDto(home);
         entity.setMarketingConsensus(dto.isMarketingConsensus());
         entity.setServiceTermsAndConditions(dto.isServiceTermsAndConditions());
         entity.setDocumentType(dto.getDocumentType());

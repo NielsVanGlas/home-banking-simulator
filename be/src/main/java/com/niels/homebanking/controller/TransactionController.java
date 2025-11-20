@@ -122,11 +122,14 @@ public class TransactionController {
     })
     @GetMapping(value = "")
     public ResponseEntity<PageShowTransactionDto> showRecords(
-            @RequestParam(defaultValue = "1") @Size(min = 1, message = "page must start from 1") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "name,desc") String[] sort,
             Authentication authentication
     ) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
         Page<ShowTransactionDto> pages = bankAccountService.getTransactions(Common.getPagination(page, size, sort), authenticationService.getAuthenticatedUser(authentication));
         List<ShowTransactionDto> response = pages.getContent();
         return response.isEmpty() ?

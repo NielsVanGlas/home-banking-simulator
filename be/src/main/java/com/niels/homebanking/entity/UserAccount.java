@@ -30,7 +30,6 @@ public class UserAccount extends CommonEntity implements UserDetails {
     private boolean enabled;
 
     @Column
-    @Convert(converter = Encryptor.class)
     private String password;
 
     @Column

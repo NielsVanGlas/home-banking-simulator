@@ -115,10 +115,13 @@ public class CurrencyController {
     })
     @GetMapping(value = "")
     public ResponseEntity<PageShowCurrencyDto> showRecords(
-            @RequestParam(defaultValue = "1") @Size(min = 1, message = "page must start from 1") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "name,desc") String[] sort
     ) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
         Page<ShowCurrencyDto> pages = currencyService.getCurrencies(Common.getPagination(page, size, sort));
         List<ShowCurrencyDto> response = pages.getContent();
         return response.isEmpty() ?
