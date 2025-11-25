@@ -1,0 +1,91 @@
+@startuml
+' ===========
+' ER Diagram
+' ===========
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam dpi 80
+skinparam nodesep 30
+skinparam ranksep 30
+
+title ER
+
+entity "user_account" <<@Entity>> {
+  * id : VARCHAR(36) <<PK>>
+  --
+  email : TEXT <<encrypted,unique>>
+  tax_code : TEXT <<encrypted,unique>>
+  first_name : TEXT <<encrypted>>
+  last_name : TEXT <<encrypted>>
+  residence_id : VARCHAR(36) <<FK>>
+  home_id : VARCHAR(36) <<FK>>
+  enabled, password, role
+  document_type, document_id <<encrypted>>
+  created_at, updated_at
+}
+
+entity "address" <<@Entity>> #lightyellow {
+  * id : VARCHAR(36) <<PK>>
+  --
+  address, city, zip_code <<encrypted>>
+  province_code, country_code <<encrypted>>
+  created_at, updated_at
+}
+
+entity "bank_account" <<@Entity>> {
+  * id : VARCHAR(36) <<PK>>
+  --
+  user_id : VARCHAR(36) <<FK,CASCADE>>
+  name : TEXT <<encrypted,unique>>
+  iban : TEXT <<encrypted,unique>>
+  currency_id : VARCHAR(36) <<FK>>
+  balance : DOUBLE
+  balance_date : TIMESTAMP
+  created_at, updated_at
+}
+
+entity "currency" <<@Entity>> #lightgreen {
+  * id : VARCHAR(36) <<PK>>
+  --
+  name, iso, symbol
+  exchange : BIGINT
+  created_at, updated_at
+}
+
+entity "transaction" <<@Entity>> {
+  * id : VARCHAR(36) <<PK>>
+  --
+  account_id : VARCHAR(36) <<FK,CASCADE>>
+  status_id : VARCHAR(36) <<FK,CASCADE>>
+  cause, date_time, value
+  waiting : BOOLEAN
+  created_at, updated_at
+}
+
+entity "transaction_status" <<@Entity>> #lightblue {
+  * id : VARCHAR(36) <<PK>>
+  --
+  status : VARCHAR
+  created_at, updated_at
+}
+
+entity "error_tracking" <<@Entity>> #lightgray {
+  * id : VARCHAR(36) <<PK>>
+  --
+  error_message : TEXT
+  status : INTEGER
+  created_at, updated_at
+}
+
+' === Relationships ===
+user_account ||--o{ address : residence_id → id
+user_account ||--o{ address : home_id → id
+
+bank_account }o--|| user_account : user_id → id
+bank_account }o--o| currency : currency_id → id
+
+transaction }o--|| bank_account : account_id → id
+transaction }o--|| transaction_status : status_id → id
+
+@enduml

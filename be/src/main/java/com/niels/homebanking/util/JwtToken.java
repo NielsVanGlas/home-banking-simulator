@@ -3,23 +3,21 @@ package com.niels.homebanking.util;
 import com.niels.homebanking.config.exception.BaseException;
 import com.niels.homebanking.entity.UserAccount;
 import com.niels.homebanking.service.UserAccountService;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
-import static com.niels.homebanking.util.Constant.ERR_0003;
 import static com.niels.homebanking.util.Constant.ERR_0012;
 
 @Component

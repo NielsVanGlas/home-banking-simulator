@@ -1,0 +1,100 @@
+@startuml
+' ==================
+' UML Class Diagram
+' ==================
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam dpi 80
+skinparam nodesep 30
+skinparam ranksep 30
+
+title UML
+
+abstract class CommonEntity <<@MappedSuperclass>> {
+  +UUID id [PK]
+  +LocalDateTime createdAt
+  +LocalDateTime updatedAt
+}
+
+class Address <<@Entity>> {
+  +String address (encrypted)
+  +String city (encrypted)
+  +String zipCode (encrypted)
+  +String provinceCode (encrypted)
+  +String countryCode (encrypted)
+}
+
+class Currency <<@Entity>> {
+  +String name
+  +String iso
+  +String symbol
+  +long exchange
+}
+
+class TransactionStatus <<@Entity>> {
+  +String status
+}
+
+class UserAccount <<@Entity>> {
+  +boolean enabled
+  +String password
+  +Role role
+  +String firstName (encrypted)
+  +String lastName (encrypted)
+  +Gender gender
+  +LocalDate bornDate
+  +String birthCity (encrypted)
+  +String birthProvinceCode (encrypted)
+  +String birthZipCode
+  +String taxCode (encrypted) [unique]
+  +String email (encrypted) [unique]
+  +String mobile (encrypted)
+  +boolean marketingConsensus
+  +boolean serviceTermsAndConditions
+  +DocumentType documentType
+  +String documentId (encrypted)
+}
+
+class BankAccount <<@Entity>> {
+  +String name (encrypted) [unique]
+  +String iban (encrypted) [unique]
+  +Currency currency
+  +LocalDateTime balanceDate
+  +Double balance
+}
+
+class Transaction <<@Entity>> {
+  +String cause
+  +LocalDateTime dateTime
+  +Double value
+  +boolean waiting
+}
+
+class ErrorTracking <<@Entity>> {
+  +String errorMessage
+  +HttpStatus status
+}
+
+' ==============
+' Relationships
+' ==============
+
+CommonEntity <|-- Address
+CommonEntity <|-- Currency
+CommonEntity <|-- TransactionStatus
+CommonEntity <|-- UserAccount
+CommonEntity <|-- BankAccount
+CommonEntity <|-- Transaction
+CommonEntity <|-- ErrorTracking
+
+UserAccount "1" --> "1" Address : residence >
+UserAccount "1" --> "1" Address : home >
+
+BankAccount "1" --> "1" UserAccount : user <
+BankAccount "0..1" --> "1" Currency : currency >
+
+Transaction "1" --> "1" BankAccount : account <
+Transaction "1" --> "1" TransactionStatus : status <
+
+@enduml

@@ -19,4 +19,6 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
     use-root-path: true
+    operationsSorter: alpha
+    tagsSorter: alpha
     supported-submit-methods: [ "get", "put", "post", "delete", "options", "head", "patch", "trace" ]

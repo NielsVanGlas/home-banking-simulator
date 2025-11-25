@@ -1,6 +1,5 @@
 package com.niels.homebanking.config.auth;
 
-import com.niels.homebanking.entity.UserAccount;
 import com.niels.homebanking.service.UserAccountService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,12 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.security.SignatureException;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.chrono.ChronoLocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class RequestFilter extends OncePerRequestFilter {
@@ -77,24 +73,20 @@ public class RequestFilter extends OncePerRequestFilter {
             Claims claims = jwtParser.parseClaimsJws(jwtToken).getBody();
             String subject = claims.getSubject();
             logger.info("JWT Claims subject: {}", subject);
-            UUID userAccountId = UUID.fromString(subject);
+            UUID userAccountId  = UUID.fromString(subject);
             String userId = userAccountId.toString();
 
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userAccountService.loadUserByUsername(userId);
-                logger.info("UserDetails loaded: {}", userDetails.getUsername());
-                if (validateToken(jwtToken, userDetails, userAccountId)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                    logger.info("Authentication set for user: {}", userId);
-                } else {
-                    logger.warn("Token validation failed for user: {}", userId);
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-                    return;
-                }
+            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                chain.doFilter(request, response);
+                return;
             }
+            UserDetails userDetails = userAccountService.loadUserByUsername(userId);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+            logger.info("Authentication set for user: {}", userId);
+
         } catch (MalformedJwtException e) {
             logger.warn("Malformed JWT token: {}", e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Malformed JWT token");
@@ -111,25 +103,6 @@ public class RequestFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
         logger.info("Finished processing request: {} {}", request.getMethod(), request.getRequestURI());
-    }
-
-    private Boolean validateToken(String token, UserDetails userDetails, UUID userAccountId) {
-        Optional<UserAccount> optionalUserAccount = userAccountService.findById(userAccountId);
-        if (optionalUserAccount.isPresent()) {
-            String username = optionalUserAccount.get().getUsername();
-            logger.info("Validating token - UserDetails username: {}, UserAccount username: {}",
-                    userDetails.getUsername(), username);
-            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-        }
-        logger.warn("UserAccount not found for ID: {}", userAccountId);
-        return false;
-    }
-
-    private Boolean isTokenExpired(String token) {
-        Claims claims = jwtParser.parseClaimsJws(token).getBody();
-        Date expiration = claims.getExpiration();
-        logger.info("Token expiration: {}", expiration);
-        return expiration.before(new Date());
     }
 
 }

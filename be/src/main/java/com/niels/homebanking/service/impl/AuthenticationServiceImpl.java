@@ -17,7 +17,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UUID getAuthenticatedUser(Authentication authentication) {
-        UserAccount user = (UserAccount) authentication.getCredentials();
+        UserAccount user = (UserAccount) authentication.getPrincipal();
         return user.getId();
     }
 

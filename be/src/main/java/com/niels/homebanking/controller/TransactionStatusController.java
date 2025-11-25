@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -117,7 +116,7 @@ public class TransactionStatusController {
     public ResponseEntity<PageShowTransactionStatusDto> showRecords(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
-            @RequestParam(defaultValue = "name,desc") String[] sort
+            @RequestParam(defaultValue = "id,desc") String[] sort
     ) throws Exception {
         if (page < 1) {
             page = 1;
