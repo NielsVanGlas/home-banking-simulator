@@ -7,15 +7,17 @@ import com.niels.homebanking.entity.BankAccount;
 import com.niels.homebanking.entity.Currency;
 import com.niels.homebanking.entity.UserAccount;
 
+import java.time.LocalDateTime;
+
 public class BankAccountFactory {
 
-    public static BankAccount createUserAccount(CreateBankAccountDto dto, UserAccount userEntity, Currency currencyEntity) {
+    public static BankAccount createUserAccount(CreateBankAccountDto dto, UserAccount userEntity, Currency currencyEntity, String iban) {
         return new BankAccount(
                 userEntity,
                 dto.getName(),
-                dto.getIban(),
+                iban,
                 currencyEntity,
-                dto.getBalanceDate(),
+                LocalDateTime.now(),
                 dto.getBalance()
         );
     }
@@ -23,7 +25,6 @@ public class BankAccountFactory {
     public static ShowBankAccountDto showBankAccountDto(BankAccount entity) {
         return new ShowBankAccountDto(
                 entity.getId(),
-                UserAccountFactory.showUserAccountDto(entity.getUser()),
                 entity.getName(),
                 entity.getIban(),
                 CurrencyFactory.showCurrencyDto(entity.getCurrency()),
@@ -33,8 +34,6 @@ public class BankAccountFactory {
     }
 
     public static BankAccount updateBankAccount(BankAccount entity, UpdateBankAccountDto dto, Currency currencyEntity) {
-        entity.setName(dto.getName());
-        entity.setIban(dto.getIban());
         entity.setCurrency(currencyEntity);
         entity.setBalanceDate(dto.getBalanceDate());
         entity.setBalance(dto.getBalance());

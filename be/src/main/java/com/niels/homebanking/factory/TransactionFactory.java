@@ -12,7 +12,6 @@ public class TransactionFactory {
     public static ShowTransactionDto showTransactionDto(Transaction entity) {
         return new ShowTransactionDto(
                 entity.getId(),
-                BankAccountFactory.showBankAccountDto(entity.getAccount()),
                 entity.getCause(),
                 entity.getDateTime(),
                 TransactionStatusFactory.showTransactionStatusDto(entity.getStatus()),

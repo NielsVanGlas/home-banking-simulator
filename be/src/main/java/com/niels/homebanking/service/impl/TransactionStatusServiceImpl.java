@@ -38,17 +38,7 @@ public class TransactionStatusServiceImpl implements TransactionStatusService {
     }
 
     @Override
-    public ShowTransactionStatusDto getTransactionStatus(UUID id) throws BaseException {
-        Optional<TransactionStatus> optionalTransactionStatus = transactionStatusRepository.findById(id);
-        if (optionalTransactionStatus.isPresent()) {
-            return TransactionStatusFactory.showTransactionStatusDto(optionalTransactionStatus.get());
-        } else {
-            throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @Override
-    public Page<ShowTransactionStatusDto> getTransactionStatuss(Pageable pagination) {
+    public Page<ShowTransactionStatusDto> getTransactionStatuses(Pageable pagination) {
         return transactionStatusRepository.findAllTransactionStatuses(pagination);
     }
 

@@ -4,13 +4,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import static com.niels.homebanking.util.Constant.PASSWORD_PATTERN;
+import java.util.Random;
 
 public class Common {
 
-    public static boolean isPasswordValid(final String password) {
-        return password.matches(PASSWORD_PATTERN);
-    }
+    private static final Random random = new Random();
 
     public static Pageable getPagination(int page, int size, String[] sort) {
 
@@ -24,6 +22,24 @@ public class Common {
                                 sort[0])
                 )
         );
+    }
+
+    public static String createIban() {
+        // Start with IT00K (we'll replace check digits later)
+        StringBuilder iban = new StringBuilder("IT00K");
+        // ABI (5 digits) - Italian bank code
+        iban.append(String.format("%05d", random.nextInt(100000)));
+        // CAB (5 digits) - branch code
+        iban.append(String.format("%05d", random.nextInt(100000)));
+        // Account number (12 characters, usually digits but can have leading zeros)
+        for (int i = 0; i < 12; i++) {
+            iban.append(random.nextInt(10));
+        }
+        return iban.toString();
+    }
+
+    public static int setPage(int page) {
+        return Math.max(page, 1);
     }
 
 }

@@ -1,10 +1,7 @@
 package com.niels.homebanking.dto.transaction;
 
-import com.niels.homebanking.dto.bankAccount.ShowBankAccountDto;
 import com.niels.homebanking.dto.transactionStatus.ShowTransactionStatusDto;
-import com.niels.homebanking.entity.BankAccount;
 import com.niels.homebanking.entity.TransactionStatus;
-import com.niels.homebanking.factory.BankAccountFactory;
 import com.niels.homebanking.factory.TransactionStatusFactory;
 
 import java.time.LocalDateTime;
@@ -13,8 +10,6 @@ import java.util.UUID;
 public class ShowTransactionDto {
 
     private UUID id;
-
-    ShowBankAccountDto account;
 
     private String cause;
 
@@ -29,9 +24,8 @@ public class ShowTransactionDto {
     public ShowTransactionDto() {
     }
 
-    public ShowTransactionDto(UUID id, ShowBankAccountDto account, String cause, LocalDateTime dateTime, ShowTransactionStatusDto status, Double value, boolean waiting) {
+    public ShowTransactionDto(UUID id, String cause, LocalDateTime dateTime, ShowTransactionStatusDto status, Double value, boolean waiting) {
         this.id = id;
-        this.account = account;
         this.cause = cause;
         this.dateTime = dateTime;
         this.status = status;
@@ -39,9 +33,8 @@ public class ShowTransactionDto {
         this.waiting = waiting;
     }
 
-    public ShowTransactionDto(UUID id, BankAccount account, String cause, LocalDateTime dateTime, TransactionStatus status, Double value, boolean waiting) {
+    public ShowTransactionDto(UUID id, String cause, LocalDateTime dateTime, TransactionStatus status, Double value, boolean waiting) {
         this.id = id;
-        this.account = BankAccountFactory.showBankAccountDto(account);
         this.cause = cause;
         this.dateTime = dateTime;
         this.status = TransactionStatusFactory.showTransactionStatusDto(status);
@@ -55,14 +48,6 @@ public class ShowTransactionDto {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public ShowBankAccountDto getAccount() {
-        return account;
-    }
-
-    public void setAccount(ShowBankAccountDto account) {
-        this.account = account;
     }
 
     public String getCause() {

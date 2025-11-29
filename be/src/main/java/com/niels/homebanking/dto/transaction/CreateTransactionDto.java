@@ -5,8 +5,6 @@ import java.util.UUID;
 
 public class CreateTransactionDto {
 
-    UUID account;
-
     private String cause;
 
     private LocalDateTime dateTime;
@@ -20,21 +18,12 @@ public class CreateTransactionDto {
     public CreateTransactionDto() {
     }
 
-    public CreateTransactionDto(UUID account, String cause, LocalDateTime dateTime, UUID status, Double value, boolean waiting) {
-        this.account = account;
+    public CreateTransactionDto(String cause, LocalDateTime dateTime, UUID status, Double value, boolean waiting) {
         this.cause = cause;
         this.dateTime = dateTime;
         this.status = status;
         this.value = value;
         this.waiting = waiting;
-    }
-
-    public UUID getAccount() {
-        return account;
-    }
-
-    public void setAccount(UUID account) {
-        this.account = account;
     }
 
     public String getCause() {

@@ -1,5 +1,6 @@
 package com.niels.homebanking.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.niels.homebanking.entity.extra.CommonEntity;
 import com.niels.homebanking.util.Encryptor;
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ public class BankAccount extends CommonEntity {
     @NotNull()
     private UserAccount user;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     @Convert(converter = Encryptor.class)
     private String name;
 
@@ -27,8 +28,10 @@ public class BankAccount extends CommonEntity {
     @Convert(converter = Encryptor.class)
     private String iban;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "currency_id", nullable = false)
+    @JsonBackReference
     private Currency currency;
 
     private LocalDateTime balanceDate;

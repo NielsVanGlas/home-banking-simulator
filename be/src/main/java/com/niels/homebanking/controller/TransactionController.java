@@ -66,37 +66,6 @@ public class TransactionController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    // Read One
-    @Operation(description = "Get a Transaction")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ShowTransactionDto.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ShowTransactionDto> showRecord(
-            @PathVariable UUID id,
-            Authentication authentication
-    ) throws Exception {
-        ShowTransactionDto record = bankAccountService.getTransaction(id, authenticationService.getAuthenticatedUser(authentication));
-        return new ResponseEntity<ShowTransactionDto>(record, HttpStatus.OK);
-    }
-
     // Read All
     @Operation(description = "Get all Transactions")
     @ApiResponses(value = {
@@ -119,16 +88,14 @@ public class TransactionController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
             })
     })
-    @GetMapping(value = "")
+    @GetMapping()
     public ResponseEntity<PageShowTransactionDto> showRecords(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "id,desc") String[] sort,
             Authentication authentication
     ) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
+        page = Common.setPage(page);
         Page<ShowTransactionDto> pages = bankAccountService.getTransactions(Common.getPagination(page, size, sort), authenticationService.getAuthenticatedUser(authentication));
         List<ShowTransactionDto> response = pages.getContent();
         return response.isEmpty() ?

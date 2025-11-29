@@ -13,9 +13,7 @@ import java.util.UUID;
 public interface TransactionStatusService {
     UUID createTransactionStatus(CreateTransactionStatusDto createTransactionStatusDto) throws ValidationException;
 
-    ShowTransactionStatusDto getTransactionStatus(UUID id) throws BaseException;
-
-    Page<ShowTransactionStatusDto> getTransactionStatuss(Pageable pagination);
+    Page<ShowTransactionStatusDto> getTransactionStatuses(Pageable pagination);
 
     void updateTransactionStatus(UUID id, UpdateTransactionStatusDto updateTransactionStatusDto) throws ValidationException, BaseException;
 

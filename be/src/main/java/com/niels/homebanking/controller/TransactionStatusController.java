@@ -60,36 +60,6 @@ public class TransactionStatusController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    // Read One
-    @Operation(description = "Get a Transaction Status")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ShowTransactionStatusDto.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ShowTransactionStatusDto> showRecord(
-            @PathVariable UUID id
-    ) throws Exception {
-        ShowTransactionStatusDto record = bankAccountService.getTransactionStatus(id);
-        return new ResponseEntity<ShowTransactionStatusDto>(record, HttpStatus.OK);
-    }
-
     // Read All
     @Operation(description = "Get all Transaction Statuses")
     @ApiResponses(value = {
@@ -112,16 +82,14 @@ public class TransactionStatusController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
             })
     })
-    @GetMapping(value = "")
+    @GetMapping()
     public ResponseEntity<PageShowTransactionStatusDto> showRecords(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "id,desc") String[] sort
     ) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        Page<ShowTransactionStatusDto> pages = bankAccountService.getTransactionStatuss(Common.getPagination(page, size, sort));
+        page = Common.setPage(page);
+        Page<ShowTransactionStatusDto> pages = bankAccountService.getTransactionStatuses(Common.getPagination(page, size, sort));
         List<ShowTransactionStatusDto> response = pages.getContent();
         return response.isEmpty() ?
                 new ResponseEntity<>(HttpStatus.NO_CONTENT) :

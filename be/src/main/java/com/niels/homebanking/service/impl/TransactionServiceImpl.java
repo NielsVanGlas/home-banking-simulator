@@ -1,7 +1,6 @@
 package com.niels.homebanking.service.impl;
 
 import com.niels.homebanking.config.exception.BaseException;
-import com.niels.homebanking.config.exception.ValidationException;
 import com.niels.homebanking.dto.transaction.CreateTransactionDto;
 import com.niels.homebanking.dto.transaction.ShowTransactionDto;
 import com.niels.homebanking.dto.transaction.UpdateTransactionDto;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 import static com.niels.homebanking.util.Constant.ERR_0005;
-import static com.niels.homebanking.util.Constant.ERR_0010;
+import static com.niels.homebanking.util.Constant.ERR_0009;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -37,16 +36,10 @@ public class TransactionServiceImpl implements TransactionService {
     private BankAccountRepository bankAccountRepository;
 
     @Override
-    public UUID createTransaction(CreateTransactionDto createTransactionDto, UUID authenticatedUser) throws ValidationException, BaseException {
+    public UUID createTransaction(CreateTransactionDto createTransactionDto, UUID authenticatedUser) throws BaseException {
         TransactionStatus transactionStatus = transactionStatusRepository.findById(createTransactionDto.getStatus()).orElseThrow(() -> new BaseException(ERR_0005, HttpStatus.NOT_FOUND));
-        BankAccount bankAccount = bankAccountRepository.findByIdAndUserId(createTransactionDto.getAccount(), authenticatedUser).orElseThrow(() -> new BaseException(ERR_0010, HttpStatus.NOT_FOUND));
+        BankAccount bankAccount = bankAccountRepository.findByUserId(authenticatedUser).orElseThrow(() -> new BaseException(ERR_0009, HttpStatus.NOT_FOUND));
         return transactionRepository.saveAndFlush(TransactionFactory.createTransaction(createTransactionDto, bankAccount, transactionStatus)).getId();
-    }
-
-    @Override
-    public ShowTransactionDto getTransaction(UUID id, UUID authenticatedUser) throws BaseException {
-        Transaction transaction = transactionRepository.findByIdAndUserId(id, authenticatedUser).orElseThrow(() -> new BaseException(ERR_0010, HttpStatus.NOT_FOUND));
-        return TransactionFactory.showTransactionDto(transaction);
     }
 
     @Override
@@ -57,8 +50,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void updateTransaction(UUID id, UpdateTransactionDto updateTransactionDto, UUID authenticatedUser) throws BaseException {
         TransactionStatus transactionStatus = transactionStatusRepository.findById(updateTransactionDto.getStatus()).orElseThrow(() -> new BaseException(ERR_0005, HttpStatus.NOT_FOUND));
-        BankAccount bankAccount = bankAccountRepository.findByIdAndUserId(updateTransactionDto.getAccount(), authenticatedUser).orElseThrow(() -> new BaseException(ERR_0010, HttpStatus.NOT_FOUND));
-        Transaction transaction = transactionRepository.findByIdAndUserId(id,authenticatedUser).orElseThrow(() -> new BaseException(ERR_0010, HttpStatus.NOT_FOUND));
+        BankAccount bankAccount = bankAccountRepository.findByUserId(authenticatedUser).orElseThrow(() -> new BaseException(ERR_0009, HttpStatus.NOT_FOUND));
+        Transaction transaction = transactionRepository.findByIdAndUserId(id,authenticatedUser).orElseThrow(() -> new BaseException(ERR_0009, HttpStatus.NOT_FOUND));
         transactionRepository.saveAndFlush(TransactionFactory.updateTransaction(updateTransactionDto, bankAccount, transactionStatus, transaction));
     }
 

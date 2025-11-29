@@ -1,11 +1,8 @@
 package com.niels.homebanking.dto.bankAccount;
 
 import com.niels.homebanking.dto.currency.ShowCurrencyDto;
-import com.niels.homebanking.dto.userAccount.ShowUserAccountDto;
 import com.niels.homebanking.entity.Currency;
-import com.niels.homebanking.entity.UserAccount;
 import com.niels.homebanking.factory.CurrencyFactory;
-import com.niels.homebanking.factory.UserAccountFactory;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,8 +10,6 @@ import java.util.UUID;
 public class ShowBankAccountDto {
 
     private UUID id;
-
-    private ShowUserAccountDto user;
 
     private String name;
 
@@ -29,9 +24,8 @@ public class ShowBankAccountDto {
     public ShowBankAccountDto() {
     }
 
-    public ShowBankAccountDto(UUID id, ShowUserAccountDto user, String name, String iban, ShowCurrencyDto currency, LocalDateTime balanceDate, Double balance) {
+    public ShowBankAccountDto(UUID id, String name, String iban, ShowCurrencyDto currency, LocalDateTime balanceDate, Double balance) {
         this.id = id;
-        this.user = user;
         this.name = name;
         this.iban = iban;
         this.currency = currency;
@@ -39,9 +33,8 @@ public class ShowBankAccountDto {
         this.balance = balance;
     }
 
-    public ShowBankAccountDto(UUID id, UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate, Double balance) {
+    public ShowBankAccountDto(UUID id, String name, String iban, Currency currency, LocalDateTime balanceDate, Double balance) {
         this.id = id;
-        this.user = UserAccountFactory.showUserAccountDto(user);
         this.name = name;
         this.iban = iban;
         this.currency = CurrencyFactory.showCurrencyDto(currency);
@@ -55,14 +48,6 @@ public class ShowBankAccountDto {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public ShowUserAccountDto getUser() {
-        return user;
-    }
-
-    public void setUser(ShowUserAccountDto user) {
-        this.user = user;
     }
 
     public String getName() {
