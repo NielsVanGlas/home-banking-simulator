@@ -20,9 +20,9 @@ spring:
         default_schema: public
         format_sql: true
   datasource:
-    jdbcUrl: jdbc:postgresql://localhost:5432/homebanking-master?autoReconnect=true&useSSL=false #${SPRING_DATASOURCE_MASTER_URL}
-    username: postgres #${SPRING_DATASOURCE_USERNAME}
-    password: u7ZgMGBvWLsG9JKhxw #${SPRING_DATASOURCE_PASSWORD}
+    jdbcUrl: jdbc:postgresql://localhost:5432/homebanking-master?autoReconnect=true&useSSL=false
+    username: postgres
+    password: u7ZgMGBvWLsG9JKhxw
   devtools:
     add-properties: false
 

@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static com.niels.homebanking.util.Constant.ERR_0007;
-import static com.niels.homebanking.util.Constant.ERR_0010;
+import static com.niels.homebanking.util.Constant.ERR_0006;
+import static com.niels.homebanking.util.Constant.ERR_0008;
 
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
@@ -29,7 +29,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public UUID createCurrency(CreateCurrencyDto createCurrencyDto) throws ValidationException {
         if (currencyRepository.findByIso(createCurrencyDto.getIso()).isPresent()) {
-            throw new ValidationException(ERR_0010, HttpStatus.BAD_REQUEST);
+            throw new ValidationException(ERR_0008, HttpStatus.BAD_REQUEST);
         }
         return currencyRepository.saveAndFlush(CurrencyFactory.createCurrency(createCurrencyDto)).getId();
     }
@@ -41,7 +41,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public void updateCurrency(UUID id, UpdateCurrencyDto updateCurrencyDto) throws BaseException {
-        Currency currency = currencyRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0007, HttpStatus.NOT_FOUND));
+        Currency currency = currencyRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0006, HttpStatus.NOT_FOUND));
         currencyRepository.saveAndFlush(CurrencyFactory.updateCurrency(updateCurrencyDto, currency));
     }
 

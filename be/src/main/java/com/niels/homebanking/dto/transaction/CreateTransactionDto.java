@@ -1,29 +1,22 @@
 package com.niels.homebanking.dto.transaction;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.math.BigDecimal;
 
 public class CreateTransactionDto {
 
     private String cause;
 
-    private LocalDateTime dateTime;
+    private String status;
 
-    private UUID status;
-
-    private Double value;
-
-    private boolean waiting;
+    private BigDecimal value;
 
     public CreateTransactionDto() {
     }
 
-    public CreateTransactionDto(String cause, LocalDateTime dateTime, UUID status, Double value, boolean waiting) {
+    public CreateTransactionDto(String cause, String status, BigDecimal value) {
         this.cause = cause;
-        this.dateTime = dateTime;
         this.status = status;
         this.value = value;
-        this.waiting = waiting;
     }
 
     public String getCause() {
@@ -34,36 +27,20 @@ public class CreateTransactionDto {
         this.cause = cause;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public UUID getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(UUID status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
-    }
-
-    public boolean isWaiting() {
-        return waiting;
-    }
-
-    public void setWaiting(boolean waiting) {
-        this.waiting = waiting;
     }
 
 }

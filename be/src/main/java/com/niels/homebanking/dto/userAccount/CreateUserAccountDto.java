@@ -3,16 +3,13 @@ package com.niels.homebanking.dto.userAccount;
 import com.niels.homebanking.dto.address.CreateAddressDto;
 import com.niels.homebanking.enumerate.DocumentType;
 import com.niels.homebanking.enumerate.Gender;
-import com.niels.homebanking.enumerate.Role;
 
 import java.time.LocalDate;
 
 public class CreateUserAccountDto {
 
     // Account info
-    private boolean enabled;
     private String password;
-    private Role role;
 
     // User info
     private String firstName;
@@ -46,10 +43,8 @@ public class CreateUserAccountDto {
     public CreateUserAccountDto() {
     }
 
-    public CreateUserAccountDto(boolean enabled, String password, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
-        this.enabled = enabled;
+    public CreateUserAccountDto(String password, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
         this.password = password;
-        this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
@@ -66,10 +61,8 @@ public class CreateUserAccountDto {
         this.documentId = documentId;
     }
 
-    public CreateUserAccountDto(boolean enabled, String password, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, CreateAddressDto residence, CreateAddressDto home, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
-        this.enabled = enabled;
+    public CreateUserAccountDto(String password, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, CreateAddressDto residence, CreateAddressDto home, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
         this.password = password;
-        this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
@@ -89,28 +82,12 @@ public class CreateUserAccountDto {
     }
 
     // Getters and Setters
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public String getFirstName() {

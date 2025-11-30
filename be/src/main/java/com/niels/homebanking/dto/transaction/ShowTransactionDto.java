@@ -1,9 +1,8 @@
 package com.niels.homebanking.dto.transaction;
 
-import com.niels.homebanking.dto.transactionStatus.ShowTransactionStatusDto;
 import com.niels.homebanking.entity.TransactionStatus;
-import com.niels.homebanking.factory.TransactionStatusFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,31 +14,27 @@ public class ShowTransactionDto {
 
     private LocalDateTime dateTime;
 
-    private ShowTransactionStatusDto status;
+    private String status;
 
-    private Double value;
-
-    private boolean waiting;
+    private BigDecimal value;
 
     public ShowTransactionDto() {
     }
 
-    public ShowTransactionDto(UUID id, String cause, LocalDateTime dateTime, ShowTransactionStatusDto status, Double value, boolean waiting) {
+    public ShowTransactionDto(UUID id, String cause, LocalDateTime dateTime, String status, BigDecimal value) {
         this.id = id;
         this.cause = cause;
         this.dateTime = dateTime;
         this.status = status;
         this.value = value;
-        this.waiting = waiting;
     }
 
-    public ShowTransactionDto(UUID id, String cause, LocalDateTime dateTime, TransactionStatus status, Double value, boolean waiting) {
+    public ShowTransactionDto(UUID id, String cause, LocalDateTime dateTime, TransactionStatus status, BigDecimal value) {
         this.id = id;
         this.cause = cause;
         this.dateTime = dateTime;
-        this.status = TransactionStatusFactory.showTransactionStatusDto(status);
+        this.status = status.getStatus();
         this.value = value;
-        this.waiting = waiting;
     }
 
     public UUID getId() {
@@ -66,27 +61,20 @@ public class ShowTransactionDto {
         this.dateTime = dateTime;
     }
 
-    public ShowTransactionStatusDto getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ShowTransactionStatusDto status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 
-    public boolean isWaiting() {
-        return waiting;
-    }
-
-    public void setWaiting(boolean waiting) {
-        this.waiting = waiting;
-    }
 }

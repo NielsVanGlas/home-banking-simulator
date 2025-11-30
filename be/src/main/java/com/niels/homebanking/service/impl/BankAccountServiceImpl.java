@@ -4,7 +4,7 @@ import com.niels.homebanking.config.exception.BaseException;
 import com.niels.homebanking.config.exception.ValidationException;
 import com.niels.homebanking.dto.bankAccount.CreateBankAccountDto;
 import com.niels.homebanking.dto.bankAccount.ShowBankAccountDto;
-import com.niels.homebanking.dto.bankAccount.UpdateBankAccountDto;
+import com.niels.homebanking.dto.transaction.CreateTransactionDto;
 import com.niels.homebanking.entity.BankAccount;
 import com.niels.homebanking.entity.Currency;
 import com.niels.homebanking.entity.UserAccount;
@@ -13,6 +13,7 @@ import com.niels.homebanking.repository.BankAccountRepository;
 import com.niels.homebanking.repository.CurrencyRepository;
 import com.niels.homebanking.repository.UserAccountRepository;
 import com.niels.homebanking.service.BankAccountService;
+import com.niels.homebanking.service.TransactionService;
 import com.niels.homebanking.util.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,18 +36,24 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Autowired
     private CurrencyRepository currencyRepository;
 
+    @Autowired
+    private TransactionService transactionService;
+
     @Override
-    public UUID createBankAccount(CreateBankAccountDto createBankAccountDto, UUID authenticatedUser) throws ValidationException {
-        UserAccount userAccount = userAccountRepository.findById(authenticatedUser).orElseThrow(() -> new ValidationException(ERR_0006, HttpStatus.BAD_REQUEST));
-        Currency currency = currencyRepository.findById(createBankAccountDto.getCurrency()).orElseThrow(() -> new ValidationException(ERR_0007, HttpStatus.BAD_REQUEST));
-        String iban = Common.createIban();
-        while (bankAccountRepository.findByIban(iban).isPresent()) {
+    public UUID createBankAccount(CreateBankAccountDto createBankAccountDto, UUID authenticatedUser) throws ValidationException, BaseException {
+        UserAccount userAccount = userAccountRepository.findById(authenticatedUser).orElseThrow(() -> new ValidationException(ERR_0005, HttpStatus.BAD_REQUEST));
+        Currency currency = currencyRepository.findById(createBankAccountDto.getCurrency()).orElseThrow(() -> new ValidationException(ERR_0006, HttpStatus.BAD_REQUEST));
+        String iban;
+        do {
             iban = Common.createIban();
-        }
+        } while (bankAccountRepository.findByIban(iban).isPresent());
         if (bankAccountRepository.findByName(createBankAccountDto.getName()).isPresent()) {
-            throw new ValidationException(ERR_0009, HttpStatus.BAD_REQUEST);
+            throw new ValidationException(ERR_0007, HttpStatus.BAD_REQUEST);
         }
-        return bankAccountRepository.saveAndFlush(BankAccountFactory.createUserAccount(createBankAccountDto, userAccount, currency, iban)).getId();
+        UUID bankAccountId = bankAccountRepository.saveAndFlush(BankAccountFactory.createUserAccount(createBankAccountDto, userAccount, currency, iban)).getId();
+        CreateTransactionDto CreateTransactionDto = new CreateTransactionDto("Accredito Iniziale", "PROCESSED", createBankAccountDto.getBalance());
+        transactionService.createTransaction(CreateTransactionDto, authenticatedUser);
+        return bankAccountId;
     }
 
     @Override
@@ -56,21 +63,6 @@ public class BankAccountServiceImpl implements BankAccountService {
             return BankAccountFactory.showBankAccountDto(optionalBankAccount.get());
         }
         throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-    }
-
-    @Override
-    public UUID updateBankAccount(UUID authenticatedUser, UpdateBankAccountDto updateBankAccountDto) throws ValidationException, BaseException {
-        Currency currency = currencyRepository.findById(updateBankAccountDto.getCurrency()).orElseThrow(() -> new ValidationException(ERR_0007, HttpStatus.BAD_REQUEST));
-        BankAccount bankAccount = bankAccountRepository.findByUserId(authenticatedUser).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
-        Optional<BankAccount> bankAccountIban = bankAccountRepository.findByIban(bankAccount.getIban());
-        if (bankAccountIban.isPresent()) {
-            throw new ValidationException(ERR_0008, HttpStatus.BAD_REQUEST);
-        }
-        Optional<BankAccount> bankAccountName = bankAccountRepository.findByName(bankAccount.getName());
-        if (bankAccountName.isPresent()) {
-            throw new ValidationException(ERR_0009, HttpStatus.BAD_REQUEST);
-        }
-        return bankAccountRepository.saveAndFlush(BankAccountFactory.updateBankAccount(bankAccount, updateBankAccountDto, currency)).getId();
     }
 
     @Override

@@ -71,10 +71,6 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (optionalUserAccount.isEmpty()) {
             throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
         }
-        Optional<UserAccount> userAccountTaxCode = userAccountRepository.findByTaxCode(updateUserAccountDto.getTaxCode());
-        if (userAccountTaxCode.isPresent() && !userAccountTaxCode.get().getId().equals(authenticatedUser)) {
-            throw new ValidationException(ERR_0001, HttpStatus.BAD_REQUEST);
-        }
         Optional<UserAccount> userAccountEmail = userAccountRepository.findByEmail(updateUserAccountDto.getEmail());
         if (userAccountEmail.isPresent() && !userAccountEmail.get().getId().equals(authenticatedUser)) {
             throw new ValidationException(ERR_0002, HttpStatus.BAD_REQUEST);
@@ -87,13 +83,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public void deleteUserAccount(UUID id, UUID authenticatedUser) throws BaseException {
-        if (id.equals(authenticatedUser)) {
-            UserAccount userAccount = userAccountRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
-            userAccountRepository.deleteById(userAccount.getId());
-        } else {
-            throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-        }
+    public void deleteUserAccount(UUID authenticatedUser) throws BaseException {
+        UserAccount userAccount = userAccountRepository.findById(authenticatedUser).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
+        userAccountRepository.deleteById(userAccount.getId());
     }
 
     @Override

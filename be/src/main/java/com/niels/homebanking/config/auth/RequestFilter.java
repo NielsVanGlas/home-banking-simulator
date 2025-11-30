@@ -40,18 +40,17 @@ public class RequestFilter extends OncePerRequestFilter {
             "/auth/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/register"
     );
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        String method = request.getMethod();
 
         // Skip JWT validation for specified paths and methods
         return SKIP_JWT_PATHS.stream().anyMatch(pattern ->
-                path.matches(pattern.replace("/**", ".*")) ||
-                        (pattern.equals("/user") && method.equals("POST"))
+                path.matches(pattern.replace("/**", ".*"))
         );
     }
 

@@ -2,11 +2,11 @@ package com.niels.homebanking.factory;
 
 import com.niels.homebanking.dto.bankAccount.CreateBankAccountDto;
 import com.niels.homebanking.dto.bankAccount.ShowBankAccountDto;
-import com.niels.homebanking.dto.bankAccount.UpdateBankAccountDto;
 import com.niels.homebanking.entity.BankAccount;
 import com.niels.homebanking.entity.Currency;
 import com.niels.homebanking.entity.UserAccount;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class BankAccountFactory {
@@ -17,8 +17,7 @@ public class BankAccountFactory {
                 dto.getName(),
                 iban,
                 currencyEntity,
-                LocalDateTime.now(),
-                dto.getBalance()
+                LocalDateTime.now()
         );
     }
 
@@ -33,10 +32,9 @@ public class BankAccountFactory {
         );
     }
 
-    public static BankAccount updateBankAccount(BankAccount entity, UpdateBankAccountDto dto, Currency currencyEntity) {
-        entity.setCurrency(currencyEntity);
-        entity.setBalanceDate(dto.getBalanceDate());
-        entity.setBalance(dto.getBalance());
+    public static BankAccount updateBankAccount(BankAccount entity, BigDecimal balance) {
+        entity.setBalanceDate(LocalDateTime.now());
+        entity.setBalance(balance);
         return entity;
     }
 }

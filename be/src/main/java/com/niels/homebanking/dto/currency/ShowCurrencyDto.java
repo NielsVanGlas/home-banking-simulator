@@ -1,5 +1,6 @@
 package com.niels.homebanking.dto.currency;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ShowCurrencyDto {
@@ -12,12 +13,12 @@ public class ShowCurrencyDto {
 
     private String symbol;
 
-    private long exchange;
+    private BigDecimal exchange;
 
     public ShowCurrencyDto() {
     }
 
-    public ShowCurrencyDto(UUID id, String name, String iso, String symbol, long exchange) {
+    public ShowCurrencyDto(UUID id, String name, String iso, String symbol, BigDecimal exchange) {
         this.id = id;
         this.name = name;
         this.iso = iso;
@@ -57,11 +58,11 @@ public class ShowCurrencyDto {
         this.symbol = symbol;
     }
 
-    public long getExchange() {
+    public BigDecimal getExchange() {
         return exchange;
     }
 
-    public void setExchange(long exchange) {
+    public void setExchange(BigDecimal exchange) {
         this.exchange = exchange;
     }
 }

@@ -5,7 +5,6 @@ import com.niels.homebanking.config.exception.ValidationException;
 import com.niels.homebanking.dto.pagination.PageShowTransactionDto;
 import com.niels.homebanking.dto.transaction.CreateTransactionDto;
 import com.niels.homebanking.dto.transaction.ShowTransactionDto;
-import com.niels.homebanking.dto.transaction.UpdateTransactionDto;
 import com.niels.homebanking.service.AuthenticationService;
 import com.niels.homebanking.service.TransactionService;
 import com.niels.homebanking.util.Common;
@@ -102,38 +101,6 @@ public class TransactionController {
                 new ResponseEntity<>(HttpStatus.NO_CONTENT) :
                 new ResponseEntity<>(new PageShowTransactionDto(response, pages.getNumber(), pages.getTotalElements(), pages.getTotalPages()), HttpStatus.OK);
 
-    }
-
-    // Update
-    @Operation(description = "Update a Transaction")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Updated", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ShowTransactionDto.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateRecord(
-            @RequestBody UpdateTransactionDto updateTransactionDto,
-            @PathVariable UUID id,
-            Authentication authentication
-    ) throws Exception {
-        bankAccountService.updateTransaction(id, updateTransactionDto, authenticationService.getAuthenticatedUser(authentication));
-        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
 }

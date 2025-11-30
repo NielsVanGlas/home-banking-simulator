@@ -1,6 +1,7 @@
 package com.niels.homebanking.dto.bankAccount;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,12 +11,12 @@ public class UpdateBankAccountDto {
 
     private LocalDateTime balanceDate = LocalDateTime.now();
 
-    private Double balance;
+    private BigDecimal balance;
 
     public UpdateBankAccountDto() {
     }
 
-    public UpdateBankAccountDto(UUID currency, LocalDateTime balanceDate, Double balance) {
+    public UpdateBankAccountDto(UUID currency, LocalDateTime balanceDate, BigDecimal balance) {
         this.currency = currency;
         this.balanceDate = balanceDate;
         this.balance = balance;
@@ -37,11 +38,11 @@ public class UpdateBankAccountDto {
         this.balanceDate = balanceDate;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

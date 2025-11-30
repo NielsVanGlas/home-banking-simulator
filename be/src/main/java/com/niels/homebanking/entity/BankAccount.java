@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -36,12 +37,20 @@ public class BankAccount extends CommonEntity {
 
     private LocalDateTime balanceDate;
 
-    private Double balance;
+    private BigDecimal balance;
 
     public BankAccount() {
     }
 
-    public BankAccount(UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate, Double balance) {
+    public BankAccount(UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate) {
+        this.user = user;
+        this.name = name;
+        this.iban = iban;
+        this.currency = currency;
+        this.balanceDate = balanceDate;
+    }
+
+    public BankAccount(UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate, BigDecimal balance) {
         this.user = user;
         this.name = name;
         this.iban = iban;
@@ -50,7 +59,7 @@ public class BankAccount extends CommonEntity {
         this.balance = balance;
     }
 
-    public BankAccount(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate, Double balance) {
+    public BankAccount(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate, BigDecimal balance) {
         super(id, createdAt, updatedAt);
         this.user = user;
         this.name = name;
@@ -100,11 +109,11 @@ public class BankAccount extends CommonEntity {
         this.balanceDate = balanceDate;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

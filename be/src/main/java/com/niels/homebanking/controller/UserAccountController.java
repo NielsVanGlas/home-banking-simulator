@@ -2,7 +2,6 @@ package com.niels.homebanking.controller;
 
 import com.niels.homebanking.config.exception.BaseException;
 import com.niels.homebanking.config.exception.ValidationException;
-import com.niels.homebanking.dto.userAccount.CreateUserAccountDto;
 import com.niels.homebanking.dto.userAccount.ShowUserAccountDto;
 import com.niels.homebanking.dto.userAccount.UpdateUserAccountDto;
 import com.niels.homebanking.service.AuthenticationService;
@@ -31,66 +30,6 @@ public class UserAccountController {
     private AuthenticationService authenticationService;
 
     //CRUD
-    // Create
-    @Operation(description = "Create a new User Account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = UUID.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @PostMapping()
-    public ResponseEntity<UUID> createRecord(
-            @RequestBody CreateUserAccountDto createUserAccountDto
-    ) throws Exception {
-        UUID id = userAccountService.createUserAccount(createUserAccountDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
-    }
-
-    // Read One
-    @Operation(description = "Get an User Account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ShowUserAccountDto.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @GetMapping()
-    public ResponseEntity<ShowUserAccountDto> showRecord(
-            Authentication authentication
-    ) throws Exception {
-        ShowUserAccountDto record = userAccountService.getUserAccount(authenticationService.getAuthenticatedUser(authentication));
-        return new ResponseEntity<ShowUserAccountDto>(record, HttpStatus.OK);
-    }
-
     // Update
     @Operation(description = "Update an User Account")
     @ApiResponses(value = {
@@ -144,12 +83,11 @@ public class UserAccountController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
             })
     })
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping()
     public ResponseEntity<Object> deleteRecord(
-            @PathVariable UUID id,
             Authentication authentication
     ) throws Exception {
-        userAccountService.deleteUserAccount(id, authenticationService.getAuthenticatedUser(authentication));
+        userAccountService.deleteUserAccount(authenticationService.getAuthenticatedUser(authentication));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

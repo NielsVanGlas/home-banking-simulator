@@ -4,7 +4,6 @@ import com.niels.homebanking.config.exception.BaseException;
 import com.niels.homebanking.config.exception.ValidationException;
 import com.niels.homebanking.dto.bankAccount.CreateBankAccountDto;
 import com.niels.homebanking.dto.bankAccount.ShowBankAccountDto;
-import com.niels.homebanking.dto.bankAccount.UpdateBankAccountDto;
 import com.niels.homebanking.service.AuthenticationService;
 import com.niels.homebanking.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,37 +89,6 @@ public class BankAccountController {
     ) throws Exception {
         ShowBankAccountDto record = bankAccountService.getBankAccount(authenticationService.getAuthenticatedUser(authentication));
         return new ResponseEntity<>(record, HttpStatus.OK);
-    }
-
-    // Update
-    @Operation(description = "Update a Bank Account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Updated", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = UUID.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @PutMapping()
-    public ResponseEntity<UUID> updateRecord(
-            @RequestBody UpdateBankAccountDto updateBankAccountDto,
-            Authentication authentication
-    )  throws Exception {
-        UUID id = bankAccountService.updateBankAccount(authenticationService.getAuthenticatedUser(authentication), updateBankAccountDto);
-        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     // Delete

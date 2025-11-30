@@ -1,5 +1,6 @@
 package com.niels.homebanking.dto.bankAccount;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class CreateBankAccountDto {
@@ -8,12 +9,12 @@ public class CreateBankAccountDto {
 
     private UUID currency;
 
-    private Double balance;
+    private BigDecimal balance;
 
     public CreateBankAccountDto() {
     }
 
-    public CreateBankAccountDto(String name, UUID currency, Double balance) {
+    public CreateBankAccountDto(String name, UUID currency, BigDecimal balance) {
         this.name = name;
         this.currency = currency;
         this.balance = balance;
@@ -35,11 +36,11 @@ public class CreateBankAccountDto {
         this.currency = currency;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

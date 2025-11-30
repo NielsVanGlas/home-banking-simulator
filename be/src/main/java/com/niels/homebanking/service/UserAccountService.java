@@ -19,7 +19,7 @@ public interface UserAccountService extends UserDetailsService {
 
     UUID updateUserAccount(UUID authenticatedUser, UpdateUserAccountDto updateUserAccountDto) throws BaseException, ValidationException;
 
-    void deleteUserAccount(UUID id, UUID authenticatedUser) throws BaseException;
+    void deleteUserAccount(UUID authenticatedUser) throws BaseException;
 
     Optional<UserAccount> findById(UUID id);
 

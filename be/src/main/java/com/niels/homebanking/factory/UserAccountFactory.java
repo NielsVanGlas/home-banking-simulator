@@ -5,6 +5,7 @@ import com.niels.homebanking.dto.userAccount.ShowUserAccountDto;
 import com.niels.homebanking.dto.userAccount.UpdateUserAccountDto;
 import com.niels.homebanking.entity.Address;
 import com.niels.homebanking.entity.UserAccount;
+import com.niels.homebanking.enumerate.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserAccountFactory {
@@ -12,9 +13,9 @@ public class UserAccountFactory {
     public static UserAccount createUserAccount(CreateUserAccountDto dto, Address residence, Address home, PasswordEncoder passwordEncoder) {
 
         return new UserAccount(
-                dto.isEnabled(),
+                true,
                 passwordEncoder.encode(dto.getPassword()),
-                dto.getRole(),
+                Role.USER,
                 dto.getFirstName(),
                 dto.getLastName(),
                 dto.getGender(),
@@ -38,7 +39,6 @@ public class UserAccountFactory {
     public static ShowUserAccountDto showUserAccountDto(UserAccount entity) {
 
         return new ShowUserAccountDto(
-                entity.getId(),
                 entity.isEnabled(),
                 entity.getRole(),
                 entity.getFirstName(),
@@ -62,23 +62,14 @@ public class UserAccountFactory {
     }
 
     public static UserAccount updateUserAccount(UserAccount entity, UpdateUserAccountDto dto, Address residence, Address home, PasswordEncoder passwordEncoder) {
-        entity.setEnabled(dto.isEnabled());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-        entity.setRole(dto.getRole());
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setGender(dto.getGender());
-        entity.setBornDate(dto.getBornDate());
-        entity.setBirthCity(dto.getBirthCity());
-        entity.setBirthProvinceCode(dto.getBirthProvinceCode());
-        entity.setBirthZipCode(dto.getBirthZipCode());
-        entity.setTaxCode(dto.getTaxCode());
+        if (dto.getPassword() != null ){
+            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         entity.setEmail(dto.getEmail());
         entity.setMobile(dto.getMobile());
-        AddressFactory.showAddressDto(residence);
-        AddressFactory.showAddressDto(home);
+        entity.setResidence(residence);
+        entity.setHome(home);
         entity.setMarketingConsensus(dto.isMarketingConsensus());
-        entity.setServiceTermsAndConditions(dto.isServiceTermsAndConditions());
         entity.setDocumentType(dto.getDocumentType());
         entity.setDocumentId(dto.getDocumentId());
         return entity;
