@@ -29,11 +29,11 @@ class Currency <<@Entity>> {
   +String name
   +String iso
   +String symbol
-  +long exchange
+  +BigDecimal exchange
 }
 
 class TransactionStatus <<@Entity>> {
-  +String status
+  +String status [unique]
 }
 
 class UserAccount <<@Entity>> {
@@ -57,18 +57,16 @@ class UserAccount <<@Entity>> {
 }
 
 class BankAccount <<@Entity>> {
-  +String name (encrypted) [unique]
+  +String name (encrypted)
   +String iban (encrypted) [unique]
-  +Currency currency
   +LocalDateTime balanceDate
-  +Double balance
+  +BigDecimal balance
 }
 
 class Transaction <<@Entity>> {
   +String cause
   +LocalDateTime dateTime
-  +Double value
-  +boolean waiting
+  +BigDecimal value
 }
 
 class ErrorTracking <<@Entity>> {
@@ -91,8 +89,8 @@ CommonEntity <|-- ErrorTracking
 UserAccount "1" --> "1" Address : residence >
 UserAccount "1" --> "1" Address : home >
 
-BankAccount "1" --> "1" UserAccount : user <
-BankAccount "0..1" --> "1" Currency : currency >
+BankAccount "1" o-- "1" UserAccount : user
+BankAccount "1" --> "1" Currency : currency >
 
 Transaction "1" --> "1" BankAccount : account <
 Transaction "1" --> "1" TransactionStatus : status <
