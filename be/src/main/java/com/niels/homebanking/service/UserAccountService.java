@@ -6,8 +6,6 @@ import com.niels.homebanking.dto.userAccount.CreateUserAccountDto;
 import com.niels.homebanking.dto.userAccount.ShowUserAccountDto;
 import com.niels.homebanking.dto.userAccount.UpdateUserAccountDto;
 import com.niels.homebanking.entity.UserAccount;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
@@ -19,15 +17,9 @@ public interface UserAccountService extends UserDetailsService {
 
     ShowUserAccountDto getUserAccount(UUID authenticatedUser) throws BaseException;
 
-    Page<ShowUserAccountDto> getUserAccounts(Pageable pageable);
+    UUID updateUserAccount(UUID authenticatedUser, UpdateUserAccountDto updateUserAccountDto) throws BaseException, ValidationException;
 
-    void updateUserAccount(UUID id, UUID authenticatedUser, UpdateUserAccountDto updateUserAccountDto) throws BaseException, ValidationException;
-
-    void deleteUserAccount(UUID id, UUID authenticatedUser) throws BaseException;
-
-    void updateEmail(UUID id, UUID authenticatedUser, String email) throws BaseException;
-
-    void updatePassword(UUID id, UUID authenticatedUser, String password) throws BaseException;
+    void deleteUserAccount(UUID authenticatedUser) throws BaseException;
 
     Optional<UserAccount> findById(UUID id);
 

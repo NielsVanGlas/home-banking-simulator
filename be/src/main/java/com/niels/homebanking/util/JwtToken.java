@@ -18,7 +18,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.niels.homebanking.util.Constant.ERR_0012;
+import static com.niels.homebanking.util.Constant.ERR_0009;
 
 @Component
 public class JwtToken {
@@ -72,7 +72,7 @@ public class JwtToken {
     }
 
     public String getUsernameFromToken(String token) throws BaseException {
-        return userAccountService.findById(getUserIdFromToken(token)).orElseThrow(() -> new BaseException(ERR_0012, HttpStatus.NOT_FOUND)).getUsername();
+        return userAccountService.findById(getUserIdFromToken(token)).orElseThrow(() -> new BaseException(ERR_0009, HttpStatus.NOT_FOUND)).getUsername();
     }
 
     public UUID getUserIdFromToken(String token) {

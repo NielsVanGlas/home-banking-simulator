@@ -1,46 +1,25 @@
 package com.niels.homebanking.dto.bankAccount;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UpdateBankAccountDto {
 
-    private String name;
-
-    private String iban;
-
     private UUID currency;
 
-    private LocalDateTime balanceDate;
+    private LocalDateTime balanceDate = LocalDateTime.now();
 
-    private Double balance;
+    private BigDecimal balance;
 
     public UpdateBankAccountDto() {
     }
 
-    public UpdateBankAccountDto(String name, String iban, UUID currency, LocalDateTime balanceDate, Double balance) {
-        this.name = name;
-        this.iban = iban;
+    public UpdateBankAccountDto(UUID currency, LocalDateTime balanceDate, BigDecimal balance) {
         this.currency = currency;
         this.balanceDate = balanceDate;
         this.balance = balance;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIban() {
-        return iban;
-    }
-
-    public void setIban(String iban) {
-        this.iban = iban;
     }
 
     public UUID getCurrency() {
@@ -59,11 +38,11 @@ public class UpdateBankAccountDto {
         this.balanceDate = balanceDate;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

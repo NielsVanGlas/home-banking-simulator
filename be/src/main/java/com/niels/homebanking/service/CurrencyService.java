@@ -13,8 +13,6 @@ import java.util.UUID;
 public interface CurrencyService {
     UUID createCurrency(CreateCurrencyDto createCurrencyDto) throws ValidationException;
 
-    ShowCurrencyDto getCurrency(UUID id) throws BaseException;
-
     Page<ShowCurrencyDto> getCurrencies(Pageable pagination);
 
     void updateCurrency(UUID id, UpdateCurrencyDto updateCurrencyDto) throws BaseException;

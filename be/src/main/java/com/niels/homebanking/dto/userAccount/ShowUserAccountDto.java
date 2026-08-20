@@ -8,12 +8,10 @@ import com.niels.homebanking.enumerate.Role;
 import com.niels.homebanking.factory.AddressFactory;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class ShowUserAccountDto {
 
     // Account info
-    private UUID id;
     private boolean enabled;
     private Role role;
 
@@ -49,8 +47,7 @@ public class ShowUserAccountDto {
     public ShowUserAccountDto() {
     }
 
-    public ShowUserAccountDto(UUID id, boolean enabled, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
-        this.id = id;
+    public ShowUserAccountDto(boolean enabled, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
         this.enabled = enabled;
         this.role = role;
         this.firstName = firstName;
@@ -69,8 +66,7 @@ public class ShowUserAccountDto {
         this.documentId = documentId;
     }
 
-    public ShowUserAccountDto(UUID id, boolean enabled, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId, Address residence, Address home) {
-        this.id = id;
+    public ShowUserAccountDto(boolean enabled, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId, Address residence, Address home) {
         this.enabled = enabled;
         this.role = role;
         this.firstName = firstName;
@@ -91,8 +87,7 @@ public class ShowUserAccountDto {
         this.home = AddressFactory.showAddressDto(home);
     }
 
-    public ShowUserAccountDto(UUID id, boolean enabled, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, ShowAddressDto residence, ShowAddressDto home, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
-        this.id = id;
+    public ShowUserAccountDto(boolean enabled, Role role, String firstName, String lastName, Gender gender, LocalDate bornDate, String birthCity, String birthProvinceCode, String birthZipCode, String taxCode, String email, String mobile, ShowAddressDto residence, ShowAddressDto home, boolean marketingConsensus, boolean serviceTermsAndConditions, DocumentType documentType, String documentId) {
         this.enabled = enabled;
         this.role = role;
         this.firstName = firstName;

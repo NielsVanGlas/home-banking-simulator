@@ -14,10 +14,7 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    @Query(value = "SELECT t FROM Transaction t WHERE t.id = ?1 AND t.account.user.id = ?2")
-    Optional<Transaction> findByIdAndUserId(UUID id, UUID authenticatedUser);
-
-    @Query(value = "SELECT new com.niels.homebanking.dto.transaction.ShowTransactionDto(t.id, t.account, t.cause, t.dateTime, t.status, t.value, t.waiting) FROM Transaction t WHERE t.account.user.id = ?1")
+    @Query(value = "SELECT new com.niels.homebanking.dto.transaction.ShowTransactionDto(t.id, t.cause, t.dateTime, t.status, t.value) FROM Transaction t WHERE t.account.user.id = ?1")
     Page<ShowTransactionDto> findByUserId(UUID authenticatedUser, Pageable pagination);
 
 }

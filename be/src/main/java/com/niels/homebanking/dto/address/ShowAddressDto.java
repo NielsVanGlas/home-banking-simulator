@@ -5,15 +5,10 @@ import java.util.UUID;
 public class ShowAddressDto {
 
     private UUID id;
-
     private String address;
-
     private String city;
-
     private String zipCode;
-
     private String provinceCode;
-
     private String countryCode;
 
     public ShowAddressDto() {

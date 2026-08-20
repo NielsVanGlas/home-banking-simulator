@@ -1,5 +1,7 @@
 package com.niels.homebanking.dto.currency;
 
+import java.math.BigDecimal;
+
 public class CreateCurrencyDto {
 
     private String name;
@@ -8,13 +10,13 @@ public class CreateCurrencyDto {
 
     private String symbol;
 
-    private long exchange;
+    private BigDecimal exchange;
 
     public CreateCurrencyDto() {
 
     }
 
-    public CreateCurrencyDto(String name, String iso, String symbol, long exchange) {
+    public CreateCurrencyDto(String name, String iso, String symbol, BigDecimal exchange) {
         this.name = name;
         this.iso = iso;
         this.symbol = symbol;
@@ -45,11 +47,11 @@ public class CreateCurrencyDto {
         this.symbol = symbol;
     }
 
-    public long getExchange() {
+    public BigDecimal getExchange() {
         return exchange;
     }
 
-    public void setExchange(long exchange) {
+    public void setExchange(BigDecimal exchange) {
         this.exchange = exchange;
     }
 }

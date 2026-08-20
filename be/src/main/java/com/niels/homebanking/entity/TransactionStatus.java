@@ -10,7 +10,7 @@ import java.util.UUID;
 @Entity
 public class TransactionStatus extends CommonEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String status;
 
     public TransactionStatus() {

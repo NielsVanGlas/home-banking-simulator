@@ -12,8 +12,6 @@ import com.niels.homebanking.repository.UserAccountRepository;
 import com.niels.homebanking.service.AddressService;
 import com.niels.homebanking.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -68,64 +66,26 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public Page<ShowUserAccountDto> getUserAccounts(Pageable pageable) {
-        return userAccountRepository.findAllUsers(pageable);
-    }
-
-    @Override
-    public void updateUserAccount(UUID id, UUID authenticatedUser, UpdateUserAccountDto updateUserAccountDto) throws BaseException, ValidationException {
-        if (id.equals(authenticatedUser)) {
-            throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-        }
-        Optional<UserAccount> optionalUserAccount = userAccountRepository.findById(id);
+    public UUID updateUserAccount(UUID authenticatedUser, UpdateUserAccountDto updateUserAccountDto) throws BaseException, ValidationException {
+        Optional<UserAccount> optionalUserAccount = userAccountRepository.findById(authenticatedUser);
         if (optionalUserAccount.isEmpty()) {
             throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
         }
-        Optional<UserAccount> userAccountTaxCode = userAccountRepository.findByTaxCode(updateUserAccountDto.getTaxCode());
-        if (userAccountTaxCode.isPresent() && !userAccountTaxCode.get().getId().equals(id)) {
-            throw new ValidationException(ERR_0001, HttpStatus.BAD_REQUEST);
-        }
         Optional<UserAccount> userAccountEmail = userAccountRepository.findByEmail(updateUserAccountDto.getEmail());
-        if (userAccountEmail.isPresent() && !userAccountEmail.get().getId().equals(id)) {
+        if (userAccountEmail.isPresent() && !userAccountEmail.get().getId().equals(authenticatedUser)) {
             throw new ValidationException(ERR_0002, HttpStatus.BAD_REQUEST);
         }
         Address residence = addressService.getOrUpdateAddress(updateUserAccountDto.getResidence());
         Address home = updateUserAccountDto.getHome() != null
                 ? addressService.getOrUpdateAddress(updateUserAccountDto.getHome())
                 : residence;
-        userAccountRepository.saveAndFlush(UserAccountFactory.updateUserAccount(optionalUserAccount.get(), updateUserAccountDto, residence, home, passwordEncoder));
+        return userAccountRepository.saveAndFlush(UserAccountFactory.updateUserAccount(optionalUserAccount.get(), updateUserAccountDto, residence, home, passwordEncoder)).getId();
     }
 
     @Override
-    public void deleteUserAccount(UUID id, UUID authenticatedUser) throws BaseException {
-        if (id.equals(authenticatedUser)) {
-            UserAccount userAccount = userAccountRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
-            userAccountRepository.deleteById(userAccount.getId());
-        } else {
-            throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @Override
-    public void updateEmail(UUID id, UUID authenticatedUser, String email) throws BaseException {
-        if (id.equals(authenticatedUser)) {
-            UserAccount userAccount = userAccountRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
-            userAccount.setEmail(email);
-            userAccountRepository.saveAndFlush(userAccount);
-        } else {
-            throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @Override
-    public void updatePassword(UUID id, UUID authenticatedUser, String password) throws BaseException {
-        if (id.equals(authenticatedUser)) {
-            UserAccount userAccount = userAccountRepository.findById(id).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
-            userAccount.setPassword(passwordEncoder.encode(password));
-            userAccountRepository.saveAndFlush(userAccount);
-        } else {
-            throw new BaseException(ERR_0003, HttpStatus.NOT_FOUND);
-        }
+    public void deleteUserAccount(UUID authenticatedUser) throws BaseException {
+        UserAccount userAccount = userAccountRepository.findById(authenticatedUser).orElseThrow(() -> new BaseException(ERR_0003, HttpStatus.NOT_FOUND));
+        userAccountRepository.deleteById(userAccount.getId());
     }
 
     @Override

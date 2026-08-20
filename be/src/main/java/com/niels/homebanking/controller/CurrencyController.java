@@ -60,36 +60,6 @@ public class CurrencyController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    // Read One
-    @Operation(description = "Get a Currency")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ShowCurrencyDto.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationException.class))
-            }),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
-            })
-    })
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ShowCurrencyDto> showRecord(
-            @PathVariable UUID id
-    ) throws Exception {
-        ShowCurrencyDto record = currencyService.getCurrency(id);
-        return new ResponseEntity<ShowCurrencyDto>(record, HttpStatus.OK);
-    }
-
     // Read All
     @Operation(description = "Get all Currencies")
     @ApiResponses(value = {
@@ -112,15 +82,13 @@ public class CurrencyController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = BaseException.class))
             })
     })
-    @GetMapping(value = "")
+    @GetMapping()
     public ResponseEntity<PageShowCurrencyDto> showRecords(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "id,desc") String[] sort
     ) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
+        page = Common.setPage(page);
         Page<ShowCurrencyDto> pages = currencyService.getCurrencies(Common.getPagination(page, size, sort));
         List<ShowCurrencyDto> response = pages.getContent();
         return response.isEmpty() ?

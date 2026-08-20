@@ -1,12 +1,10 @@
 package com.niels.homebanking.dto.bankAccount;
 
 import com.niels.homebanking.dto.currency.ShowCurrencyDto;
-import com.niels.homebanking.dto.userAccount.ShowUserAccountDto;
 import com.niels.homebanking.entity.Currency;
-import com.niels.homebanking.entity.UserAccount;
 import com.niels.homebanking.factory.CurrencyFactory;
-import com.niels.homebanking.factory.UserAccountFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,38 +12,34 @@ public class ShowBankAccountDto {
 
     private UUID id;
 
-    private ShowUserAccountDto user;
-
     private String name;
 
     private String iban;
 
     private ShowCurrencyDto currency;
 
-    private LocalDateTime balanceDate;
+    private LocalDateTime balancBigDecimalate;
 
-    private Double balance;
+    private BigDecimal balance;
 
     public ShowBankAccountDto() {
     }
 
-    public ShowBankAccountDto(UUID id, ShowUserAccountDto user, String name, String iban, ShowCurrencyDto currency, LocalDateTime balanceDate, Double balance) {
+    public ShowBankAccountDto(UUID id, String name, String iban, ShowCurrencyDto currency, LocalDateTime balancBigDecimalate, BigDecimal balance) {
         this.id = id;
-        this.user = user;
         this.name = name;
         this.iban = iban;
         this.currency = currency;
-        this.balanceDate = balanceDate;
+        this.balancBigDecimalate = balancBigDecimalate;
         this.balance = balance;
     }
 
-    public ShowBankAccountDto(UUID id, UserAccount user, String name, String iban, Currency currency, LocalDateTime balanceDate, Double balance) {
+    public ShowBankAccountDto(UUID id, String name, String iban, Currency currency, LocalDateTime balancBigDecimalate, BigDecimal balance) {
         this.id = id;
-        this.user = UserAccountFactory.showUserAccountDto(user);
         this.name = name;
         this.iban = iban;
         this.currency = CurrencyFactory.showCurrencyDto(currency);
-        this.balanceDate = balanceDate;
+        this.balancBigDecimalate = balancBigDecimalate;
         this.balance = balance;
     }
 
@@ -55,14 +49,6 @@ public class ShowBankAccountDto {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public ShowUserAccountDto getUser() {
-        return user;
-    }
-
-    public void setUser(ShowUserAccountDto user) {
-        this.user = user;
     }
 
     public String getName() {
@@ -89,19 +75,19 @@ public class ShowBankAccountDto {
         this.currency = currency;
     }
 
-    public LocalDateTime getBalanceDate() {
-        return balanceDate;
+    public LocalDateTime getBalancBigDecimalate() {
+        return balancBigDecimalate;
     }
 
-    public void setBalanceDate(LocalDateTime balanceDate) {
-        this.balanceDate = balanceDate;
+    public void setBalancBigDecimalate(LocalDateTime balancBigDecimalate) {
+        this.balancBigDecimalate = balancBigDecimalate;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 }

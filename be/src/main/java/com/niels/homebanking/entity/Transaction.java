@@ -6,15 +6,17 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 public class Transaction extends CommonEntity {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
+    @JsonBackReference
     BankAccount account;
 
     @Column(nullable = false)
@@ -30,31 +32,26 @@ public class Transaction extends CommonEntity {
     private TransactionStatus status;
 
     @Column(nullable = false)
-    private Double value;
-
-    @Column
-    private boolean waiting = false;
+    private BigDecimal value;
 
     public Transaction() {
     }
 
-    public Transaction(BankAccount account, String cause, LocalDateTime dateTime, TransactionStatus status, Double value, boolean waiting) {
+    public Transaction(BankAccount account, String cause, LocalDateTime dateTime, TransactionStatus status, BigDecimal value) {
         this.account = account;
         this.cause = cause;
         this.dateTime = dateTime;
         this.status = status;
         this.value = value;
-        this.waiting = waiting;
     }
 
-    public Transaction(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, BankAccount account, String cause, LocalDateTime dateTime, TransactionStatus status, Double value, boolean waiting) {
+    public Transaction(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, BankAccount account, String cause, LocalDateTime dateTime, TransactionStatus status, BigDecimal value) {
         super(id, createdAt, updatedAt);
         this.account = account;
         this.cause = cause;
         this.dateTime = dateTime;
         this.status = status;
         this.value = value;
-        this.waiting = waiting;
     }
 
     public BankAccount getAccount() {
@@ -89,19 +86,12 @@ public class Transaction extends CommonEntity {
         this.status = status;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 
-    public boolean isWaiting() {
-        return waiting;
-    }
-
-    public void setWaiting(boolean waiting) {
-        this.waiting = waiting;
-    }
 }

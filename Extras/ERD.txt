@@ -6,8 +6,8 @@ left to right direction
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 skinparam dpi 80
-skinparam nodesep 30
-skinparam ranksep 30
+skinparam nodesep 40
+skinparam ranksep 40
 
 title ER
 
@@ -18,8 +18,8 @@ entity "user_account" <<@Entity>> {
   tax_code : TEXT <<encrypted,unique>>
   first_name : TEXT <<encrypted>>
   last_name : TEXT <<encrypted>>
-  residence_id : VARCHAR(36) <<FK>>
-  home_id : VARCHAR(36) <<FK>>
+  residence_id : VARCHAR(36) <<FK,SET_NULL>>
+  home_id : VARCHAR(36) <<FK,SET_NULL>>
   enabled, password, role
   document_type, document_id <<encrypted>>
   created_at, updated_at
@@ -37,10 +37,10 @@ entity "bank_account" <<@Entity>> {
   * id : VARCHAR(36) <<PK>>
   --
   user_id : VARCHAR(36) <<FK,CASCADE>>
-  name : TEXT <<encrypted,unique>>
+  name : TEXT <<encrypted>>
   iban : TEXT <<encrypted,unique>>
-  currency_id : VARCHAR(36) <<FK>>
-  balance : DOUBLE
+  currency_id : VARCHAR(36) <<FK,NOT_NULL>>
+  balance : DECIMAL(19,4)
   balance_date : TIMESTAMP
   created_at, updated_at
 }
@@ -49,7 +49,7 @@ entity "currency" <<@Entity>> #lightgreen {
   * id : VARCHAR(36) <<PK>>
   --
   name, iso, symbol
-  exchange : BIGINT
+  exchange : DECIMAL(19,8)
   created_at, updated_at
 }
 
@@ -58,15 +58,16 @@ entity "transaction" <<@Entity>> {
   --
   account_id : VARCHAR(36) <<FK,CASCADE>>
   status_id : VARCHAR(36) <<FK,CASCADE>>
-  cause, date_time, value
-  waiting : BOOLEAN
+  cause : TEXT
+  date_time : TIMESTAMP
+  value : DECIMAL(19,4)
   created_at, updated_at
 }
 
 entity "transaction_status" <<@Entity>> #lightblue {
   * id : VARCHAR(36) <<PK>>
   --
-  status : VARCHAR
+  status : VARCHAR <<unique>>
   created_at, updated_at
 }
 
@@ -79,11 +80,11 @@ entity "error_tracking" <<@Entity>> #lightgray {
 }
 
 ' === Relationships ===
-user_account ||--o{ address : residence_id → id
-user_account ||--o{ address : home_id → id
+user_account }o--|| address : residence_id → id
+user_account }o--|| address : home_id → id
 
-bank_account }o--|| user_account : user_id → id
-bank_account }o--o| currency : currency_id → id
+bank_account ||--o{ user_account : user_id → id
+bank_account }|--|| currency : currency_id → id
 
 transaction }o--|| bank_account : account_id → id
 transaction }o--|| transaction_status : status_id → id

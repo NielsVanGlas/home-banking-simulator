@@ -1,28 +1,22 @@
 package com.niels.homebanking.dto.bankAccount;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class CreateBankAccountDto {
 
     private String name;
 
-    private String iban;
-
     private UUID currency;
 
-    private LocalDateTime balanceDate;
-
-    private Double balance;
+    private BigDecimal balance;
 
     public CreateBankAccountDto() {
     }
 
-    public CreateBankAccountDto(String name, String iban, UUID currency, LocalDateTime balanceDate, Double balance) {
+    public CreateBankAccountDto(String name, UUID currency, BigDecimal balance) {
         this.name = name;
-        this.iban = iban;
         this.currency = currency;
-        this.balanceDate = balanceDate;
         this.balance = balance;
     }
 
@@ -34,14 +28,6 @@ public class CreateBankAccountDto {
         this.name = name;
     }
 
-    public String getIban() {
-        return iban;
-    }
-
-    public void setIban(String iban) {
-        this.iban = iban;
-    }
-
     public UUID getCurrency() {
         return currency;
     }
@@ -50,19 +36,11 @@ public class CreateBankAccountDto {
         this.currency = currency;
     }
 
-    public LocalDateTime getBalanceDate() {
-        return balanceDate;
-    }
-
-    public void setBalanceDate(LocalDateTime balanceDate) {
-        this.balanceDate = balanceDate;
-    }
-
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
