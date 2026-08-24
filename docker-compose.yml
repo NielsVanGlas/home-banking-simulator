@@ -4,14 +4,55 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: u7ZgMGBvWLsG9JKhxw
+      POSTGRES_DB: homebanking-prod
     volumes:
-      - ./db/data:/var/lib/postgresql/data
-      - ./db/config:/docker-entrypoint-initdb.d
+      - ./.data:/var/lib/postgresql/data
+      - ./.config:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"  # Expose DB port for local access
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - homebanking-net
 
+  backend:
+    build:
+      context: ./be
+      dockerfile: Dockerfile
+    container_name: homebanking-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_MASTER_URL: jdbc:postgresql://db:5432/homebanking-prod?autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: u7ZgMGBvWLsG9JKhxw
+      JWT_SECRET: q12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNBq12WE34rT56Yu7I89O0paSDfgHJKlmNB
+      SYMMETRIC_SECRET: oiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837dirs945rf8edi85<òzx,9u7t6rerftu54aoiuyrnf7584hduseanfi4837
+      SYMMETRIC_SALT: 1234567890qwerty'13'poiuyt0987654321
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - homebanking-net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./fe
+      dockerfile: Dockerfile
+    container_name: homebanking-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - homebanking-net
+    restart: unless-stopped
+
+networks:
+  homebanking-net:
+    driver: bridge

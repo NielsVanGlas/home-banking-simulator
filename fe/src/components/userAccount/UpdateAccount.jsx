@@ -32,7 +32,7 @@ const UpdateAccount = ({ open, onClose, user }) => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [sameAsResidence, setSameAsResidence] = useState(
-        JSON.stringify(user?.residence?.id) == JSON.stringify(user?.home?.id)
+        JSON.stringify(user?.residence?.id) === JSON.stringify(user?.home?.id)
     );
 
     const handleChange = (e) => {

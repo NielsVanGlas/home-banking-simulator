@@ -1,0 +1,40 @@
+app:
+  jwt:
+    access: 31536000000
+    refresh: 86400000
+    otp: 300000
+    secret: ${JWT_SECRET}
+  symmetric:
+    secret: ${SYMMETRIC_SECRET}
+    salt: ${SYMMETRIC_SALT}
+
+spring:
+  jpa:
+    generate-ddl: false
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: public
+        format_sql: true
+  datasource:
+    jdbcUrl: ${SPRING_DATASOURCE_MASTER_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  devtools:
+    add-properties: false
+
+logging:
+  level:
+    org:
+      springframework:
+        core:
+          env=ERROR:
+      hibernate:
+        SQL: ERROR
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
