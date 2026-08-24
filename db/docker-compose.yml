@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: u7ZgMGBvWLsG9JKhxw
+    volumes:
+      - .data:/var/lib/postgresql/data
+      - ./config:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"  # Expose DB port for local access
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
